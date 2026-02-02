@@ -880,8 +880,10 @@ function startApp() {
         setStatus(statusEl, '신청 중...', 'loading');
 
         try {
-            alert('신청 시도: userId=' + currentUser.id + ', eventId=' + currentEventId);
-            await DB.attendEvent(currentUser.id, currentEventId, memo);
+            var res = await _supabase
+                .from('attendance')
+                .insert({ user_id: currentUser.id, event_id: currentEventId, note: memo || '' });
+            if (res.error) throw res.error;
             setStatus(statusEl, '참여 신청 완료!', 'success');
             setTimeout(() => {
                 closePopup();
