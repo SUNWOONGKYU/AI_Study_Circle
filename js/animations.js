@@ -240,9 +240,8 @@
                     toggleActions: 'play none none none'
                 },
                 y: 30,
-                rotation: 2,
-                stagger: 0.1,
-                duration: 0.6,
+                stagger: 0.08,
+                duration: 0.5,
                 ease: 'power2.out'
             });
         });
@@ -257,7 +256,6 @@
                     toggleActions: 'play none none none'
                 },
                 y: 30,
-                rotation: -1,
                 stagger: 0.08,
                 duration: 0.5,
                 ease: 'power2.out'
@@ -466,10 +464,12 @@
             onUpdate: (self) => {
                 if (self.scroll() > 50) {
                     nav.style.background = 'var(--bg-nav-scroll)';
+                    nav.style.webkitBackdropFilter = 'blur(30px)';
                     nav.style.backdropFilter = 'blur(30px)';
                     nav.style.borderBottomColor = 'rgba(0, 229, 255, 0.1)';
                 } else {
                     nav.style.background = 'var(--bg-nav)';
+                    nav.style.webkitBackdropFilter = 'blur(20px)';
                     nav.style.backdropFilter = 'blur(20px)';
                     nav.style.borderBottomColor = 'rgba(10, 74, 138, 0.5)';
                 }
