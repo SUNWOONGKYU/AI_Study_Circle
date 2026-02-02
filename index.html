@@ -27,7 +27,7 @@
                 <li><a href="#activities">활동</a></li>
                 <li><a href="#schedule">일정</a></li>
                 <li><a href="#location">장소</a></li>
-                <li><a href="#join" class="nav-cta">참여 신청 →</a></li>
+                <li><a href="#membership" class="nav-cta">멤버 가입 →</a></li>
             </ul>
             <button class="mobile-menu-btn" aria-label="메뉴 열기">☰</button>
         </div>
@@ -52,7 +52,7 @@
             </p>
 
             <div class="hero-actions">
-                <a href="#join" class="btn-primary">참여 신청하기 →</a>
+                <a href="#membership" class="btn-primary">멤버 가입하기 →</a>
                 <a href="#about" class="btn-secondary">더 알아보기</a>
             </div>
 
@@ -341,23 +341,93 @@
         </div>
     </section>
 
-    <!-- Join CTA -->
-    <section id="join" class="join-section">
+    <!-- 멤버 가입 (Membership) -->
+    <section id="membership" class="membership-section">
         <div class="section-inner">
-            <div class="section-label reveal">// JOIN US</div>
-            <h2 class="section-title reveal">
-                함께 시작해볼까요?
-            </h2>
-            <p class="section-desc reveal">
-                AI 및 Tech Trend에 관심 있으신 분이라면 누구나 편하게 참여할 수 있습니다.
-                둘 셋이라도 모여서 하면 더 재밌고 좋습니다.
-            </p>
+            <div class="section-label reveal">// MEMBERSHIP</div>
+            <h2 class="section-title reveal">멤버 가입</h2>
+            <p class="section-desc reveal">AI Study Circle에 멤버로 합류하세요. 누구나 편하게 가입할 수 있습니다.</p>
 
-            <div class="hero-actions reveal" style="justify-content: center;">
-                <a href="https://buly.kr/5fDxaSf" target="_blank" rel="noopener noreferrer" class="btn-primary">📝 참가 신청서 작성 (Google Form) →</a>
-            </div>
+            <form id="membership-form" class="site-form reveal">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="m-name">이름 <span class="required">*</span></label>
+                        <input type="text" id="m-name" name="name" required placeholder="홍길동">
+                    </div>
+                    <div class="form-group">
+                        <label for="m-contact">연락처 (전화 또는 카카오톡 ID) <span class="required">*</span></label>
+                        <input type="text" id="m-contact" name="contact" required placeholder="010-0000-0000 또는 kakao ID">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>관심 분야 (복수 선택 가능)</label>
+                    <div class="checkbox-grid">
+                        <label class="checkbox-item"><input type="checkbox" name="interests" value="바이브코딩"> 바이브코딩/개발</label>
+                        <label class="checkbox-item"><input type="checkbox" name="interests" value="서비스기획"> 앱/웹 서비스 기획</label>
+                        <label class="checkbox-item"><input type="checkbox" name="interests" value="AI툴활용"> AI 툴 활용</label>
+                        <label class="checkbox-item"><input type="checkbox" name="interests" value="콘텐츠제작"> 콘텐츠 제작</label>
+                        <label class="checkbox-item"><input type="checkbox" name="interests" value="사업기획"> 사업 아이디어 기획</label>
+                        <label class="checkbox-item"><input type="checkbox" name="interests" value="테크트렌드"> Tech Trend</label>
+                        <label class="checkbox-item"><input type="checkbox" name="interests" value="경제투자"> 경제전망/투자</label>
+                        <label class="checkbox-item"><input type="checkbox" name="interests" value="마케팅"> AI 마케팅</label>
+                        <label class="checkbox-item"><input type="checkbox" name="interests" value="네트워킹"> 네트워킹</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="m-type">멤버 유형</label>
+                    <select id="m-type" name="memberType">
+                        <option value="">선택해주세요</option>
+                        <option value="메이커">🔥 메이커 — 당장 만들고 부딪히고 싶다</option>
+                        <option value="러너">📚 러너 — 배우면서 천천히 참여하고 싶다</option>
+                        <option value="옵저버">👀 옵저버 — 분위기와 흐름을 보고 싶다</option>
+                        <option value="컨트리뷰터">🎤 컨트리뷰터 — AI 지식을 공유하고 기여하고 싶다</option>
+                        <option value="쇼케이서">🚀 쇼케이서 — 개발한 서비스를 소개하고 싶다</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="m-message">한마디 (선택)</label>
+                    <textarea id="m-message" name="message" rows="3" placeholder="자기소개, 기대하는 점, 하고 싶은 말 등"></textarea>
+                </div>
+                <button type="submit" class="btn-primary form-submit">멤버 가입 신청 →</button>
+                <div class="form-status" id="membership-status"></div>
+            </form>
+        </div>
+    </section>
 
-            <div class="join-methods reveal">
+    <!-- 모임 참가 (Event Attendance) -->
+    <section id="attend" class="attend-section">
+        <div class="section-inner">
+            <div class="section-label reveal">// ATTEND</div>
+            <h2 class="section-title reveal">모임 참가 신청</h2>
+            <p class="section-desc reveal">다가오는 모임에 참가하세요. 멤버가 아니어도 참가 가능합니다.</p>
+
+            <form id="attend-form" class="site-form reveal">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="a-name">이름 <span class="required">*</span></label>
+                        <input type="text" id="a-name" name="name" required placeholder="홍길동">
+                    </div>
+                    <div class="form-group">
+                        <label for="a-contact">연락처 <span class="required">*</span></label>
+                        <input type="text" id="a-contact" name="contact" required placeholder="010-0000-0000 또는 kakao ID">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="a-event">참가할 모임 <span class="required">*</span></label>
+                    <select id="a-event" name="event" required>
+                        <option value="">모임을 선택해주세요</option>
+                        <option value="2025-02-06 1차 킥오프">2.6(금) 1차 모임 — 킥오프 (옐로펀치 성수메사)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="a-note">메모 (선택)</label>
+                    <textarea id="a-note" name="note" rows="2" placeholder="늦을 수 있어요, 처음 참가합니다 등"></textarea>
+                </div>
+                <button type="submit" class="btn-primary form-submit">모임 참가 신청 →</button>
+                <div class="form-status" id="attend-status"></div>
+            </form>
+
+            <div class="join-methods reveal" style="margin-top: 3rem;">
                 <div class="join-method">
                     <div class="jm-icon">📋</div>
                     <div>
