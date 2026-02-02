@@ -354,7 +354,7 @@
         <div class="modal-content">
             <button class="modal-close" id="modal-close-btn">&times;</button>
             <h2 class="modal-title" id="membership-title">멤버 가입</h2>
-            <div id="modal-notice" class="modal-notice" style="display:none;">모임 참여 신청을 위해 먼저 로그인해 주세요.</div>
+            <p id="modal-notice" class="modal-notice" style="display:none;">모임 참여 신청을 위해 먼저 로그인해 주세요.</p>
 
             <!-- 비로그인: 가입 / 로그인 폼 -->
             <div id="auth-container">
@@ -412,6 +412,7 @@
                     </div>
                     <button type="submit" class="btn-primary form-submit">멤버 가입 신청 →</button>
                     <div class="form-status" id="signup-status"></div>
+                    <p class="auth-switch">이미 가입하셨나요? <a href="#" id="switch-to-login">로그인</a></p>
                 </form>
 
                 <!-- 로그인 폼 -->
@@ -428,6 +429,7 @@
                     </div>
                     <button type="submit" class="btn-primary form-submit">로그인 →</button>
                     <div class="form-status" id="login-status"></div>
+                    <p class="auth-switch">아직 멤버가 아니신가요? <a href="#" id="switch-to-signup">멤버 가입</a></p>
                 </form>
             </div>
 

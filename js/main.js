@@ -58,6 +58,16 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && authModal && authModal.classList.contains('open')) closeModal();
 });
 
+// ========== Login <-> Signup 전환 ==========
+document.getElementById('switch-to-login').addEventListener('click', (e) => {
+    e.preventDefault();
+    openModal('login');
+});
+document.getElementById('switch-to-signup').addEventListener('click', (e) => {
+    e.preventDefault();
+    openModal('signup');
+});
+
 // ========== Status helper ==========
 function setStatus(el, message, type) {
     el.textContent = message;
@@ -282,7 +292,7 @@ async function renderScheduleEvents() {
                     <div class="schedule-highlight">
                         <div class="schedule-date-label" style="font-size:1.4rem;font-weight:700;">✨ ${escapeHtml(ev.title)}</div>
                         <div class="schedule-date">
-                            <span class="month">${display}</span> ${dayName}
+                            <span class="month">${display}</span> <span class="day-name">${dayName}</span>
                         </div>
                         ${timeDisplay ? `<div class="schedule-time">${timeDisplay}</div>` : ''}
                         ${attendBtn}
