@@ -82,14 +82,14 @@ async function loadMembers() {
         renderMembers(allMembers);
     } catch (e) {
         document.getElementById('members-tbody').innerHTML =
-            '<tr><td colspan="6" class="admin-empty">멤버 목록을 불러올 수 없습니다.</td></tr>';
+            '<tr><td colspan="7" class="admin-empty">멤버 목록을 불러올 수 없습니다.</td></tr>';
     }
 }
 
 function renderMembers(members) {
     const tbody = document.getElementById('members-tbody');
     if (members.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="admin-empty">등록된 멤버가 없습니다.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="admin-empty">등록된 멤버가 없습니다.</td></tr>';
         document.getElementById('member-count').textContent = '';
         return;
     }
@@ -104,6 +104,7 @@ function renderMembers(members) {
             <td>${escapeHtml(interests || '-')}</td>
             <td>${escapeHtml(m.member_type || '-')}</td>
             <td>${date}</td>
+            <td><button class="btn-secondary btn-small" onclick="deleteMember('${m.id}', '${escapeHtml(m.name || m.email || '')}')" style="color:var(--accent-pink);">삭제</button></td>
         </tr>`;
     }).join('');
 
@@ -417,6 +418,19 @@ async function deleteLocation(id) {
         loadLocations();
     } catch (e) {
         alert('삭제 중 오류가 발생했습니다.');
+    }
+}
+
+// ========== Delete Member ==========
+async function deleteMember(userId, displayName) {
+    if (!confirm(`"${displayName}" 회원을 정말 삭제하시겠습니까?\n삭제하면 복구할 수 없습니다.`)) return;
+    try {
+        const { error } = await _supabase.rpc('delete_user', { target_user_id: userId });
+        if (error) throw error;
+        alert('회원이 삭제되었습니다.');
+        loadMembers();
+    } catch (e) {
+        alert('회원 삭제 중 오류가 발생했습니다: ' + (e.message || e));
     }
 }
 
