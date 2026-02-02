@@ -461,6 +461,11 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
         return;
     }
 
+    if (typeof Auth === 'undefined') {
+        setStatus(statusEl, '시스템 로딩 중입니다. 잠시 후 다시 시도해주세요.', 'error');
+        return;
+    }
+
     setStatus(statusEl, '가입 처리 중...', 'loading');
     btn.disabled = true;
 
@@ -519,6 +524,11 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
 
     const email = document.getElementById('l-email').value.trim();
     const password = document.getElementById('l-password').value;
+
+    if (typeof Auth === 'undefined') {
+        setStatus(statusEl, '시스템 로딩 중입니다. 잠시 후 다시 시도해주세요.', 'error');
+        return;
+    }
 
     setStatus(statusEl, '로그인 중...', 'loading');
     btn.disabled = true;
@@ -656,21 +666,22 @@ let startAttempts = 0;
 function startApp() {
     startAttempts++;
     var dbReady = typeof DB !== 'undefined';
+    var authReady = typeof Auth !== 'undefined';
     var sbReady = typeof window.supabase !== 'undefined';
 
-    if (!dbReady && startAttempts <= 10) {
-        console.warn('startApp attempt ' + startAttempts + ' — DB:' + dbReady + ' supabase:' + sbReady);
+    if ((!dbReady || !authReady) && startAttempts <= 10) {
+        console.warn('startApp attempt ' + startAttempts + ' — DB:' + dbReady + ' Auth:' + authReady + ' supabase:' + sbReady);
         var ec = document.getElementById('events-container');
-        if (ec) ec.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted);">로딩 중... (시도 ' + startAttempts + '/10, DB:' + dbReady + ', supabase:' + sbReady + ')</div>';
+        if (ec) ec.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted);">로딩 중... (시도 ' + startAttempts + '/10)</div>';
         setTimeout(startApp, 500);
         return;
     }
 
-    if (!dbReady) {
+    if (!dbReady || !authReady) {
         // 10번 시도 후에도 실패 — 에러 표시
         var ec = document.getElementById('events-container');
         var lc = document.getElementById('locations-container');
-        var msg = 'Supabase 로드 실패 (DB:' + dbReady + ', window.supabase:' + sbReady + '). 페이지를 새로고침 해주세요.';
+        var msg = 'Supabase 로드 실패 (DB:' + dbReady + ', Auth:' + authReady + '). 페이지를 새로고침 해주세요.';
         if (ec) ec.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--accent-pink);">' + msg + '</div>';
         if (lc) lc.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--accent-pink);">' + msg + '</div>';
         return;
