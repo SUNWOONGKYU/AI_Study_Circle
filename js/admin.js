@@ -5,25 +5,39 @@ let adminProfile = null;
 
 // ========== Init ==========
 async function initAdmin() {
-    // 로그인 여부와 관계없이 콘텐츠 표시
-    document.getElementById('admin-loading').style.display = 'none';
-    document.getElementById('admin-content').style.display = 'block';
-
-    // 로그인된 경우 사용자 정보 표시
     try {
         const session = await Auth.getSession();
-        if (session) {
-            adminUser = session.user;
-            try {
-                adminProfile = await DB.getProfile(adminUser.id);
-                document.getElementById('nav-user-name').textContent = adminProfile.name || adminUser.email;
-            } catch (e) {}
+        if (!session) {
+            showDenied();
+            return;
         }
-    } catch (e) {}
 
-    loadMembers();
-    loadEvents();
-    loadLocations();
+        adminUser = session.user;
+
+        // ADMIN_EMAILS 체크 (supabase-config.js에 정의)
+        if (!ADMIN_EMAILS.includes(adminUser.email.toLowerCase())) {
+            showDenied();
+            return;
+        }
+
+        try {
+            adminProfile = await DB.getProfile(adminUser.id);
+        } catch (e) {
+            adminProfile = null;
+        }
+
+        // 관리자 확인 완료 — 콘텐츠 표시
+        document.getElementById('admin-loading').style.display = 'none';
+        document.getElementById('admin-content').style.display = 'block';
+        document.getElementById('nav-user-name').textContent =
+            (adminProfile && adminProfile.name) || adminUser.email;
+
+        loadMembers();
+        loadEvents();
+        loadLocations();
+    } catch (e) {
+        showDenied();
+    }
 }
 
 function showDenied() {
