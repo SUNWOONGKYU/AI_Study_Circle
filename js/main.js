@@ -336,7 +336,7 @@ async function renderScheduleEvents() {
             return `
                 <div class="schedule-card reveal">
                     <div class="schedule-highlight">
-                        <div class="schedule-date-label" style="font-size:1.4rem;font-weight:700;">✨ ${escapeHtml(ev.title)}</div>
+                        <div class="schedule-date-label" style="font-size:1.82rem;font-weight:700;">✨ ${escapeHtml(ev.title)}</div>
                         <div class="schedule-date">
                             <span class="month">${display}</span> <span class="day-name">${dayName}</span>
                         </div>
@@ -386,7 +386,6 @@ function rebindAttendButtons() {
     const toggleBtn = document.getElementById('attend-toggle-btn');
     if (toggleBtn) {
         toggleBtn.addEventListener('click', () => {
-            console.log('attend-toggle clicked, currentUser:', !!currentUser, 'currentEventId:', currentEventId);
             if (!currentUser) {
                 openModal('login');
                 return;
@@ -427,8 +426,6 @@ function rebindAttendButtons() {
 function updateAttendUI() {
     const attendLoggedIn = document.getElementById('attend-logged-in');
     const attendGuestBtn = document.getElementById('attend-guest-btn');
-
-    console.log('updateAttendUI called — currentUser:', !!currentUser, 'loggedInEl:', !!attendLoggedIn, 'guestEl:', !!attendGuestBtn);
 
     if (!attendLoggedIn && !attendGuestBtn) return;
 
