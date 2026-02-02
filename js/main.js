@@ -481,14 +481,16 @@ function updateAttendUI() {
 
     if (!attendLoggedIn && !attendGuestBtn) return;
 
-    if (currentUser && currentProfile) {
+    if (currentUser) {
         if (attendLoggedIn) attendLoggedIn.style.display = 'block';
         if (attendGuestBtn) attendGuestBtn.style.display = 'none';
         // 참여 폼에 이름/전화 자동입력
         const aName = document.getElementById('a-name');
         const aContact = document.getElementById('a-contact');
-        if (aName) aName.value = currentProfile.name || '';
-        if (aContact) aContact.value = currentProfile.phone || '';
+        if (currentProfile) {
+            if (aName) aName.value = currentProfile.name || '';
+            if (aContact) aContact.value = currentProfile.phone || '';
+        }
     } else {
         if (attendLoggedIn) attendLoggedIn.style.display = 'none';
         if (attendGuestBtn) attendGuestBtn.style.display = '';
