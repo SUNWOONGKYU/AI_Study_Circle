@@ -1,0 +1,288 @@
+// ========== Admin Page Logic ==========
+
+let adminUser = null;
+let adminProfile = null;
+
+// ========== Init ==========
+async function initAdmin() {
+    const session = await Auth.getSession();
+    if (!session) {
+        showDenied();
+        return;
+    }
+
+    adminUser = session.user;
+    try {
+        adminProfile = await DB.getProfile(adminUser.id);
+    } catch (e) {
+        showDenied();
+        return;
+    }
+
+    if (!adminProfile || adminProfile.role !== 'admin') {
+        showDenied();
+        return;
+    }
+
+    // 관리자 확인됨
+    document.getElementById('admin-loading').style.display = 'none';
+    document.getElementById('admin-content').style.display = 'block';
+    document.getElementById('nav-user-name').textContent = adminProfile.name || adminUser.email;
+
+    loadMembers();
+    loadEvents();
+}
+
+function showDenied() {
+    document.getElementById('admin-loading').style.display = 'none';
+    document.getElementById('admin-denied').style.display = 'block';
+}
+
+// ========== Tabs ==========
+document.querySelectorAll('.admin-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+    });
+});
+
+// ========== Nav Dropdown ==========
+const navUserBtn = document.getElementById('nav-user-btn');
+const navDropdown = document.getElementById('nav-dropdown');
+
+navUserBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    navDropdown.classList.toggle('show');
+});
+
+document.addEventListener('click', () => {
+    navDropdown.classList.remove('show');
+});
+
+document.getElementById('admin-logout-btn').addEventListener('click', async () => {
+    await Auth.signOut();
+    window.location.href = 'index.html';
+});
+
+// ========== Members ==========
+let allMembers = [];
+
+async function loadMembers() {
+    try {
+        allMembers = await DB.getAllProfiles();
+        renderMembers(allMembers);
+    } catch (e) {
+        document.getElementById('members-tbody').innerHTML =
+            '<tr><td colspan="6" class="admin-empty">멤버 목록을 불러올 수 없습니다.</td></tr>';
+    }
+}
+
+function renderMembers(members) {
+    const tbody = document.getElementById('members-tbody');
+    if (members.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="admin-empty">등록된 멤버가 없습니다.</td></tr>';
+        document.getElementById('member-count').textContent = '';
+        return;
+    }
+
+    tbody.innerHTML = members.map(m => {
+        const interests = (m.interests || []).join(', ');
+        const date = m.created_at ? new Date(m.created_at).toLocaleDateString('ko-KR') : '-';
+        return `<tr>
+            <td>${escapeHtml(m.name || '-')}</td>
+            <td>${escapeHtml(m.phone || '-')}</td>
+            <td>${escapeHtml(m.id ? '(가입됨)' : '-')}</td>
+            <td>${escapeHtml(interests || '-')}</td>
+            <td>${escapeHtml(m.member_type || '-')}</td>
+            <td>${date}</td>
+        </tr>`;
+    }).join('');
+
+    document.getElementById('member-count').textContent = `총 ${members.length}명`;
+}
+
+// ========== Member Search ==========
+document.getElementById('member-search').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    if (!q) {
+        renderMembers(allMembers);
+        return;
+    }
+    const filtered = allMembers.filter(m =>
+        (m.name || '').toLowerCase().includes(q) ||
+        (m.phone || '').includes(q)
+    );
+    renderMembers(filtered);
+});
+
+// ========== Events ==========
+let allEvents = [];
+
+async function loadEvents() {
+    try {
+        allEvents = await DB.getAllEvents();
+        renderEvents(allEvents);
+    } catch (e) {
+        document.getElementById('events-tbody').innerHTML =
+            '<tr><td colspan="7" class="admin-empty">모임 목록을 불러올 수 없습니다.</td></tr>';
+    }
+}
+
+function renderEvents(events) {
+    const tbody = document.getElementById('events-tbody');
+    if (events.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="admin-empty">등록된 모임이 없습니다.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = events.map(ev => {
+        const date = ev.event_date || '-';
+        const time = ev.event_time ? ev.event_time.slice(0, 5) : '-';
+        const status = ev.is_active
+            ? '<span class="admin-badge active">활성</span>'
+            : '<span class="admin-badge inactive">비활성</span>';
+
+        return `<tr>
+            <td>${escapeHtml(ev.title)}</td>
+            <td>${date}</td>
+            <td>${time}</td>
+            <td>${escapeHtml(ev.location || '-')}</td>
+            <td>${status}</td>
+            <td><button class="btn-secondary btn-small" onclick="viewAttendees(${ev.id}, '${escapeHtml(ev.title)}')">보기</button></td>
+            <td>
+                <button class="btn-secondary btn-small" onclick="editEvent(${ev.id})">수정</button>
+                <button class="btn-secondary btn-small" onclick="toggleEventActive(${ev.id}, ${ev.is_active})">${ev.is_active ? '비활성화' : '활성화'}</button>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+// ========== Event Form ==========
+const eventForm = document.getElementById('event-form');
+const eventFormReset = document.getElementById('event-form-reset');
+
+eventForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const statusEl = document.getElementById('event-form-status');
+    const btn = eventForm.querySelector('.form-submit');
+    const editId = document.getElementById('edit-event-id').value;
+
+    const eventData = {
+        title: document.getElementById('ev-title').value.trim(),
+        event_date: document.getElementById('ev-date').value,
+        event_time: document.getElementById('ev-time').value || null,
+        location: document.getElementById('ev-location').value.trim(),
+        description: document.getElementById('ev-desc').value.trim()
+    };
+
+    statusEl.textContent = '저장 중...';
+    statusEl.className = 'form-status loading';
+    btn.disabled = true;
+
+    try {
+        if (editId) {
+            await DB.updateEvent(parseInt(editId), eventData);
+            statusEl.textContent = '모임이 수정되었습니다.';
+        } else {
+            await DB.createEvent(eventData);
+            statusEl.textContent = '모임이 등록되었습니다.';
+        }
+        statusEl.className = 'form-status success';
+        resetEventForm();
+        loadEvents();
+    } catch (err) {
+        statusEl.textContent = '저장 중 오류가 발생했습니다.';
+        statusEl.className = 'form-status error';
+    } finally {
+        btn.disabled = false;
+    }
+});
+
+function editEvent(id) {
+    const ev = allEvents.find(e => e.id === id);
+    if (!ev) return;
+
+    document.getElementById('edit-event-id').value = ev.id;
+    document.getElementById('ev-title').value = ev.title;
+    document.getElementById('ev-date').value = ev.event_date;
+    document.getElementById('ev-time').value = ev.event_time ? ev.event_time.slice(0, 5) : '';
+    document.getElementById('ev-location').value = ev.location || '';
+    document.getElementById('ev-desc').value = ev.description || '';
+    document.getElementById('event-form-title').textContent = '모임 수정';
+    eventForm.querySelector('.form-submit').textContent = '모임 수정 →';
+    eventFormReset.style.display = 'inline-flex';
+
+    // 폼으로 스크롤
+    eventForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetEventForm() {
+    eventForm.reset();
+    document.getElementById('edit-event-id').value = '';
+    document.getElementById('event-form-title').textContent = '새 모임 등록';
+    eventForm.querySelector('.form-submit').textContent = '모임 등록 →';
+    eventFormReset.style.display = 'none';
+    document.getElementById('event-form-status').textContent = '';
+}
+
+eventFormReset.addEventListener('click', resetEventForm);
+
+async function toggleEventActive(id, isActive) {
+    try {
+        await DB.updateEvent(id, { is_active: !isActive });
+        loadEvents();
+    } catch (e) {
+        alert('상태 변경 중 오류가 발생했습니다.');
+    }
+}
+
+// ========== Attendees ==========
+async function viewAttendees(eventId, eventTitle) {
+    const card = document.getElementById('attendees-card');
+    const tbody = document.getElementById('attendees-tbody');
+    const titleEl = document.getElementById('attendees-title');
+    const countEl = document.getElementById('attendees-count');
+
+    card.style.display = 'block';
+    titleEl.textContent = `"${eventTitle}" 참여자 명단`;
+    tbody.innerHTML = '<tr><td colspan="4" class="admin-loading">로딩 중...</td></tr>';
+    countEl.textContent = '';
+
+    try {
+        const attendees = await DB.getEventAttendees(eventId);
+
+        if (attendees.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="admin-empty">참여 신청자가 없습니다.</td></tr>';
+            countEl.textContent = '';
+        } else {
+            tbody.innerHTML = attendees.map(a => {
+                const name = a.profiles ? a.profiles.name : '-';
+                const phone = a.profiles ? a.profiles.phone : '-';
+                const date = a.created_at ? new Date(a.created_at).toLocaleDateString('ko-KR') : '-';
+                return `<tr>
+                    <td>${escapeHtml(name)}</td>
+                    <td>${escapeHtml(phone)}</td>
+                    <td>${escapeHtml(a.note || '-')}</td>
+                    <td>${date}</td>
+                </tr>`;
+            }).join('');
+            countEl.textContent = `총 ${attendees.length}명`;
+        }
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="4" class="admin-empty">참여자 목록을 불러올 수 없습니다.</td></tr>';
+    }
+
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ========== Helpers ==========
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+// ========== Init ==========
+initAdmin();

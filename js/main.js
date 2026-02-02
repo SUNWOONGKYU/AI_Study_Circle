@@ -1,3 +1,8 @@
+// ========== State ==========
+let currentUser = null;
+let currentProfile = null;
+let currentEventId = null; // 첫 번째 활성 이벤트 ID (참여 신청용)
+
 // ========== Scroll Reveal ==========
 const reveals = document.querySelectorAll('.reveal');
 const observer = new IntersectionObserver((entries) => {
@@ -33,101 +38,417 @@ document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
     document.querySelector('.nav-links').classList.toggle('show');
 });
 
-// ========== Google Apps Script Form Endpoints ==========
-// TODO: 아래 URL을 실제 Google Apps Script 배포 URL로 교체하세요
-const SCRIPT_URL = '';
-
-// ========== Form Submission ==========
+// ========== Status helper ==========
 function setStatus(el, message, type) {
     el.textContent = message;
     el.className = 'form-status ' + type;
 }
 
-function handleFormSubmit(form, statusEl, formType) {
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+// ========== Auth State Management ==========
+async function initAuth() {
+    const session = await Auth.getSession();
+    if (session) {
+        currentUser = session.user;
+        try {
+            currentProfile = await DB.getProfile(currentUser.id);
+        } catch (e) {
+            currentProfile = null;
+        }
+    }
+    updateUI();
+    loadFirstEvent();
 
-        if (!SCRIPT_URL) {
-            // Google Apps Script 미연동 시 localStorage에 임시 저장
-            const data = Object.fromEntries(new FormData(form));
-
-            // 체크박스 (interests) 복수값 처리
-            if (formType === 'membership') {
-                const checked = form.querySelectorAll('input[name="interests"]:checked');
-                data.interests = Array.from(checked).map(c => c.value).join(', ');
+    Auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+            currentUser = session.user;
+            try {
+                currentProfile = await DB.getProfile(currentUser.id);
+            } catch (e) {
+                currentProfile = null;
             }
+            updateUI();
+            loadFirstEvent();
+        } else if (event === 'SIGNED_OUT') {
+            currentUser = null;
+            currentProfile = null;
+            updateUI();
+        }
+    });
+}
 
-            data.formType = formType;
-            data.submittedAt = new Date().toISOString();
+function updateUI() {
+    const navAuthLink = document.getElementById('nav-auth-link');
+    const navUserMenu = document.getElementById('nav-user-menu');
+    const navUserName = document.getElementById('nav-user-name');
+    const navAdminLink = document.getElementById('nav-admin-link');
+    const authContainer = document.getElementById('auth-container');
+    const profileContainer = document.getElementById('profile-container');
+    const membershipTitle = document.getElementById('membership-title');
+    const membershipDesc = document.getElementById('membership-desc');
+    const attendLoggedIn = document.getElementById('attend-logged-in');
+    const attendLoginPrompt = document.getElementById('attend-login-prompt');
 
-            // localStorage에 저장
-            const key = 'aisc_' + formType;
-            const existing = JSON.parse(localStorage.getItem(key) || '[]');
-            existing.push(data);
-            localStorage.setItem(key, JSON.stringify(existing));
+    if (currentUser && currentProfile) {
+        // 로그인 상태
+        navAuthLink.style.display = 'none';
+        navUserMenu.style.display = 'block';
+        navUserName.textContent = currentProfile.name || currentUser.email;
 
-            setStatus(statusEl, '신청이 완료되었습니다! 감사합니다.', 'success');
-            form.reset();
+        // 관리자 링크
+        if (currentProfile.role === 'admin') {
+            navAdminLink.style.display = 'block';
+        } else {
+            navAdminLink.style.display = 'none';
+        }
+
+        // 멤버십 섹션 → 프로필 모드
+        authContainer.style.display = 'none';
+        profileContainer.style.display = 'block';
+        membershipTitle.textContent = '내 프로필';
+        membershipDesc.textContent = '프로필 정보를 확인하고 수정할 수 있습니다.';
+
+        // 프로필 폼 채우기
+        fillProfileForm();
+
+        // 참여 신청
+        attendLoggedIn.style.display = 'block';
+        attendLoginPrompt.style.display = 'none';
+
+        // 참여 폼에 이름/전화 자동입력
+        const aName = document.getElementById('a-name');
+        const aContact = document.getElementById('a-contact');
+        if (aName) aName.value = currentProfile.name || '';
+        if (aContact) aContact.value = currentProfile.phone || '';
+    } else {
+        // 비로그인 상태
+        navAuthLink.style.display = 'block';
+        navUserMenu.style.display = 'none';
+        navAdminLink.style.display = 'none';
+
+        authContainer.style.display = 'block';
+        profileContainer.style.display = 'none';
+        membershipTitle.textContent = '멤버 가입';
+        membershipDesc.textContent = 'AI Study Circle에 멤버로 합류하세요. 누구나 편하게 가입할 수 있습니다.';
+
+        attendLoggedIn.style.display = 'none';
+        attendLoginPrompt.style.display = 'block';
+    }
+}
+
+function fillProfileForm() {
+    if (!currentProfile) return;
+    document.getElementById('p-name').value = currentProfile.name || '';
+    document.getElementById('p-contact').value = currentProfile.phone || '';
+    document.getElementById('p-type').value = currentProfile.member_type || '';
+    document.getElementById('p-message').value = currentProfile.message || '';
+
+    // 관심분야 체크
+    const checkboxes = document.querySelectorAll('#profile-interests input[type="checkbox"]');
+    const interests = currentProfile.interests || [];
+    checkboxes.forEach(cb => {
+        cb.checked = interests.includes(cb.value);
+    });
+}
+
+// ========== Load first active event ==========
+async function loadFirstEvent() {
+    try {
+        const events = await DB.getEvents();
+        if (events.length > 0) {
+            currentEventId = events[0].id;
+            document.getElementById('attend-event-id').value = currentEventId;
+
+            // 이미 참여했는지 확인
+            if (currentUser) {
+                checkAttendance();
+            }
+        }
+    } catch (e) {
+        // 이벤트 로드 실패 시 하드코딩된 UI 유지
+    }
+}
+
+async function checkAttendance() {
+    if (!currentUser || !currentEventId) return;
+    try {
+        const attendance = await DB.getMyAttendance(currentUser.id);
+        const existing = attendance.find(a => a.event_id === currentEventId);
+        const toggleBtn = document.getElementById('attend-toggle-btn');
+        const attendForm = document.getElementById('attend-form');
+        const attendAlready = document.getElementById('attend-already');
+
+        if (existing) {
+            toggleBtn.style.display = 'none';
+            attendForm.style.display = 'none';
+            attendAlready.style.display = 'block';
+        } else {
+            toggleBtn.style.display = '';
+            attendAlready.style.display = 'none';
+        }
+    } catch (e) {
+        // 무시
+    }
+}
+
+// ========== Auth Tabs ==========
+document.querySelectorAll('.auth-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        const target = tab.dataset.tab;
+        document.getElementById('signup-form').style.display = target === 'signup' ? 'block' : 'none';
+        document.getElementById('login-form').style.display = target === 'login' ? 'block' : 'none';
+    });
+});
+
+// ========== Sign Up ==========
+document.getElementById('signup-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const statusEl = document.getElementById('signup-status');
+    const btn = e.target.querySelector('.form-submit');
+
+    const email = document.getElementById('s-email').value.trim();
+    const password = document.getElementById('s-password').value;
+    const name = document.getElementById('s-name').value.trim();
+    const phone = document.getElementById('s-contact').value.trim();
+    const memberType = document.getElementById('s-type').value;
+    const message = document.getElementById('s-message').value.trim();
+    const checked = e.target.querySelectorAll('input[name="interests"]:checked');
+    const interests = Array.from(checked).map(c => c.value);
+
+    // 비밀번호 유효성: 영문+숫자만, 6자 이상
+    if (password.length < 6) {
+        setStatus(statusEl, '비밀번호는 6자 이상이어야 합니다.', 'error');
+        return;
+    }
+    if (!/^[a-zA-Z0-9]+$/.test(password)) {
+        setStatus(statusEl, '비밀번호는 영문과 숫자만 사용할 수 있습니다.', 'error');
+        return;
+    }
+
+    setStatus(statusEl, '가입 처리 중...', 'loading');
+    btn.disabled = true;
+
+    try {
+        await Auth.signUp(email, password, { name, phone });
+
+        // 트리거가 프로필 생성 후 추가 정보 업데이트
+        // 약간의 지연 후 프로필 업데이트
+        const session = await Auth.getSession();
+        if (session) {
+            await DB.updateProfile(session.user.id, {
+                interests,
+                member_type: memberType,
+                message
+            });
+        }
+
+        setStatus(statusEl, '가입이 완료되었습니다! 환영합니다.', 'success');
+        e.target.reset();
+    } catch (err) {
+        let msg = '가입 중 오류가 발생했습니다.';
+        if (err.message.includes('already registered')) {
+            msg = '이미 등록된 이메일입니다.';
+        } else if (err.message.includes('password')) {
+            msg = '비밀번호는 6자 이상이어야 합니다.';
+        }
+        setStatus(statusEl, msg, 'error');
+    } finally {
+        btn.disabled = false;
+    }
+});
+
+// ========== Login ==========
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const statusEl = document.getElementById('login-status');
+    const btn = e.target.querySelector('.form-submit');
+
+    const email = document.getElementById('l-email').value.trim();
+    const password = document.getElementById('l-password').value;
+
+    setStatus(statusEl, '로그인 중...', 'loading');
+    btn.disabled = true;
+
+    try {
+        await Auth.signIn(email, password);
+        setStatus(statusEl, '로그인 성공!', 'success');
+        e.target.reset();
+    } catch (err) {
+        setStatus(statusEl, '이메일 또는 비밀번호가 올바르지 않습니다.', 'error');
+    } finally {
+        btn.disabled = false;
+    }
+});
+
+// ========== Profile Update ==========
+document.getElementById('profile-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const statusEl = document.getElementById('profile-status');
+    const btn = e.target.querySelector('.form-submit');
+
+    const name = document.getElementById('p-name').value.trim();
+    const phone = document.getElementById('p-contact').value.trim();
+    const memberType = document.getElementById('p-type').value;
+    const message = document.getElementById('p-message').value.trim();
+    const checked = e.target.querySelectorAll('input[name="interests"]:checked');
+    const interests = Array.from(checked).map(c => c.value);
+
+    setStatus(statusEl, '저장 중...', 'loading');
+    btn.disabled = true;
+
+    try {
+        currentProfile = await DB.updateProfile(currentUser.id, {
+            name,
+            phone,
+            interests,
+            member_type: memberType,
+            message
+        });
+        document.getElementById('nav-user-name').textContent = name;
+        setStatus(statusEl, '프로필이 저장되었습니다.', 'success');
+    } catch (err) {
+        setStatus(statusEl, '저장 중 오류가 발생했습니다.', 'error');
+    } finally {
+        btn.disabled = false;
+    }
+});
+
+// ========== Attend Toggle ==========
+const attendToggleBtn = document.getElementById('attend-toggle-btn');
+if (attendToggleBtn) {
+    attendToggleBtn.addEventListener('click', () => {
+        const form = document.getElementById('attend-form');
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+            attendToggleBtn.textContent = '접기 ▲';
+            attendToggleBtn.classList.remove('btn-primary');
+            attendToggleBtn.classList.add('btn-secondary');
+        } else {
+            form.style.display = 'none';
+            attendToggleBtn.textContent = '이 모임 참여 신청하기 →';
+            attendToggleBtn.classList.remove('btn-secondary');
+            attendToggleBtn.classList.add('btn-primary');
+        }
+    });
+}
+
+// ========== Attend Submit ==========
+const attendForm = document.getElementById('attend-form');
+if (attendForm) {
+    attendForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const statusEl = document.getElementById('attend-status');
+        const btn = e.target.querySelector('.form-submit');
+        const note = document.getElementById('a-note').value.trim();
+        const eventId = parseInt(document.getElementById('attend-event-id').value);
+
+        if (!currentUser || !eventId) {
+            setStatus(statusEl, '로그인이 필요합니다.', 'error');
             return;
         }
 
-        // Google Apps Script 연동
-        setStatus(statusEl, '제출 중...', 'loading');
-        const submitBtn = form.querySelector('.form-submit');
-        submitBtn.disabled = true;
+        setStatus(statusEl, '신청 중...', 'loading');
+        btn.disabled = true;
 
         try {
-            const data = Object.fromEntries(new FormData(form));
-
-            if (formType === 'membership') {
-                const checked = form.querySelectorAll('input[name="interests"]:checked');
-                data.interests = Array.from(checked).map(c => c.value).join(', ');
-            }
-
-            data.formType = formType;
-
-            const res = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-
-            setStatus(statusEl, '신청이 완료되었습니다! 감사합니다.', 'success');
-            form.reset();
+            await DB.attendEvent(currentUser.id, eventId, note);
+            setStatus(statusEl, '참여 신청이 완료되었습니다!', 'success');
+            e.target.reset();
+            checkAttendance();
         } catch (err) {
-            setStatus(statusEl, '제출 중 오류가 발생했습니다. 다시 시도해주세요.', 'error');
+            if (err.message.includes('duplicate') || err.code === '23505') {
+                setStatus(statusEl, '이미 참여 신청한 모임입니다.', 'error');
+            } else {
+                setStatus(statusEl, '신청 중 오류가 발생했습니다.', 'error');
+            }
         } finally {
-            submitBtn.disabled = false;
+            btn.disabled = false;
         }
     });
 }
 
-const membershipForm = document.getElementById('membership-form');
-const attendForm = document.getElementById('attend-form');
-
-if (membershipForm) {
-    handleFormSubmit(membershipForm, document.getElementById('membership-status'), 'membership');
-}
-
-if (attendForm) {
-    handleFormSubmit(attendForm, document.getElementById('attend-status'), 'attend');
-}
-
-// ========== Attend toggle (show form under event) ==========
-document.querySelectorAll('.attend-toggle').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const form = btn.nextElementSibling;
-        if (form.style.display === 'none') {
-            form.style.display = 'block';
-            btn.textContent = '접기 ▲';
-            btn.classList.remove('btn-primary');
-            btn.classList.add('btn-secondary');
-        } else {
-            form.style.display = 'none';
-            btn.textContent = '이 모임 참여 신청하기 →';
-            btn.classList.remove('btn-secondary');
-            btn.classList.add('btn-primary');
+// ========== Cancel Attendance ==========
+const cancelBtn = document.getElementById('cancel-attend-btn');
+if (cancelBtn) {
+    cancelBtn.addEventListener('click', async () => {
+        if (!currentUser || !currentEventId) return;
+        try {
+            await DB.cancelAttendance(currentUser.id, currentEventId);
+            document.getElementById('attend-already').style.display = 'none';
+            document.getElementById('attend-toggle-btn').style.display = '';
+        } catch (err) {
+            alert('취소 중 오류가 발생했습니다.');
         }
+    });
+}
+
+// ========== Nav User Dropdown ==========
+const navUserBtn = document.getElementById('nav-user-btn');
+const navDropdown = document.getElementById('nav-dropdown');
+
+if (navUserBtn) {
+    navUserBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        navDropdown.classList.toggle('show');
+    });
+}
+
+document.addEventListener('click', () => {
+    if (navDropdown) navDropdown.classList.remove('show');
+});
+
+// Dropdown actions
+document.querySelectorAll('.dropdown-item').forEach(item => {
+    item.addEventListener('click', async (e) => {
+        const action = e.target.dataset.action;
+        if (action === 'logout') {
+            e.preventDefault();
+            try {
+                await Auth.signOut();
+            } catch (err) {
+                // 무시
+            }
+        }
+        navDropdown.classList.remove('show');
     });
 });
+
+// ========== Modal ==========
+const authModal = document.getElementById('auth-modal');
+const modalCloseBtn = document.getElementById('modal-close-btn');
+
+function openModal() {
+    authModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    authModal.classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+// 모든 data-open-modal 버튼에서 모달 열기
+document.querySelectorAll('[data-open-modal]').forEach(el => {
+    el.addEventListener('click', (e) => {
+        e.preventDefault();
+        openModal();
+    });
+});
+
+// 닫기 버튼
+modalCloseBtn.addEventListener('click', closeModal);
+
+// 배경 클릭으로 닫기
+authModal.addEventListener('click', (e) => {
+    if (e.target === authModal) closeModal();
+});
+
+// ESC 키로 닫기
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && authModal.classList.contains('open')) closeModal();
+});
+
+// ========== Init ==========
+initAuth();

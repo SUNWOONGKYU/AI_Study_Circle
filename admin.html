@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 — AI Study Circle 110</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="bg-grid"></div>
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-inner">
+            <div class="nav-logo">
+                <a href="index.html" style="text-decoration:none; display:flex; align-items:center; gap:0.5rem;">
+                    <span class="ai">AI</span>
+                    <span class="sc">Study Circle</span>
+                    <span class="brand-num">110</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">메인 사이트</a></li>
+                <li id="nav-user-menu" class="nav-user-menu">
+                    <button class="nav-user-btn" id="nav-user-btn">
+                        <span id="nav-user-name">관리자</span> ▼
+                    </button>
+                    <div class="nav-dropdown" id="nav-dropdown">
+                        <a href="index.html#membership" class="dropdown-item">내 프로필</a>
+                        <button class="dropdown-item" id="admin-logout-btn">로그아웃</button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <!-- 로딩 / 권한 없음 -->
+        <div id="admin-loading" class="admin-loading">관리자 권한 확인 중...</div>
+        <div id="admin-denied" style="display:none;" class="admin-empty">
+            <h2>접근 권한이 없습니다</h2>
+            <p>관리자만 접근할 수 있는 페이지입니다.</p>
+            <a href="index.html" class="btn-primary" style="margin-top:1rem; display:inline-flex;">메인으로 돌아가기 →</a>
+        </div>
+
+        <!-- 관리자 콘텐츠 -->
+        <div id="admin-content" style="display:none;">
+            <div class="admin-header">
+                <h1>관리자 페이지</h1>
+                <p>멤버 관리와 모임 관리를 할 수 있습니다.</p>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="members">멤버 관리</button>
+                <button class="admin-tab" data-tab="events">모임 관리</button>
+            </div>
+
+            <!-- 멤버 관리 -->
+            <div id="panel-members" class="admin-panel active">
+                <div class="admin-card">
+                    <h3>전체 멤버 목록</h3>
+                    <div class="admin-actions">
+                        <input type="text" class="admin-search" id="member-search" placeholder="이름 또는 전화번호로 검색...">
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table" id="members-table">
+                            <thead>
+                                <tr>
+                                    <th>이름</th>
+                                    <th>전화번호</th>
+                                    <th>이메일</th>
+                                    <th>관심분야</th>
+                                    <th>유형</th>
+                                    <th>가입일</th>
+                                </tr>
+                            </thead>
+                            <tbody id="members-tbody">
+                                <tr><td colspan="6" class="admin-loading">로딩 중...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p id="member-count" style="margin-top:1rem; color:var(--text-muted); font-size:0.85rem;"></p>
+                </div>
+            </div>
+
+            <!-- 모임 관리 -->
+            <div id="panel-events" class="admin-panel">
+                <!-- 모임 등록 -->
+                <div class="admin-card event-form-card">
+                    <h3 id="event-form-title">새 모임 등록</h3>
+                    <form id="event-form" class="site-form">
+                        <input type="hidden" id="edit-event-id" value="">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="ev-title">모임 제목 <span class="required">*</span></label>
+                                <input type="text" id="ev-title" required placeholder="2차 정기 모임">
+                            </div>
+                            <div class="form-group">
+                                <label for="ev-date">날짜 <span class="required">*</span></label>
+                                <input type="date" id="ev-date" required>
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="ev-time">시간</label>
+                                <input type="time" id="ev-time" value="19:00">
+                            </div>
+                            <div class="form-group">
+                                <label for="ev-location">장소</label>
+                                <input type="text" id="ev-location" placeholder="옐로펀치 성수메사">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ev-desc">설명</label>
+                            <textarea id="ev-desc" rows="3" placeholder="모임 내용, 준비물 등"></textarea>
+                        </div>
+                        <div style="display:flex; gap:0.5rem;">
+                            <button type="submit" class="btn-primary form-submit">모임 등록 →</button>
+                            <button type="button" class="btn-secondary" id="event-form-reset" style="display:none;">취소</button>
+                        </div>
+                        <div class="form-status" id="event-form-status"></div>
+                    </form>
+                </div>
+
+                <!-- 모임 목록 -->
+                <div class="admin-card">
+                    <h3>모임 목록</h3>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table" id="events-table">
+                            <thead>
+                                <tr>
+                                    <th>제목</th>
+                                    <th>날짜</th>
+                                    <th>시간</th>
+                                    <th>장소</th>
+                                    <th>상태</th>
+                                    <th>참여자</th>
+                                    <th>관리</th>
+                                </tr>
+                            </thead>
+                            <tbody id="events-tbody">
+                                <tr><td colspan="7" class="admin-loading">로딩 중...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 참여자 명단 (동적) -->
+                <div class="admin-card" id="attendees-card" style="display:none;">
+                    <h3 id="attendees-title">참여자 명단</h3>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>이름</th>
+                                    <th>전화번호</th>
+                                    <th>메모</th>
+                                    <th>신청일</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendees-tbody"></tbody>
+                        </table>
+                    </div>
+                    <p id="attendees-count" style="margin-top:1rem; color:var(--text-muted); font-size:0.85rem;"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
