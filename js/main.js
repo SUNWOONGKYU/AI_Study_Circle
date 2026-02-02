@@ -652,9 +652,22 @@ document.querySelectorAll('.dropdown-item').forEach(item => {
 });
 
 // ========== Init ==========
-// 모임/장소는 인증과 무관하게 즉시 로드
-renderScheduleEvents().catch(e => console.error('Events render error:', e));
-renderLocations().catch(e => console.error('Locations render error:', e));
+function startApp() {
+    if (typeof DB === 'undefined') {
+        console.error('DB not loaded — retrying in 500ms');
+        setTimeout(startApp, 500);
+        return;
+    }
+    // 모임/장소는 인증과 무관하게 즉시 로드
+    renderScheduleEvents().catch(e => console.error('Events render error:', e));
+    renderLocations().catch(e => console.error('Locations render error:', e));
+    // 인증 초기화 (별도)
+    initAuth().catch(e => console.error('Auth init error:', e));
+}
 
-// 인증 초기화 (별도)
-initAuth().catch(e => console.error('Auth init error:', e));
+// DOM 로드 완료 후 실행
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startApp);
+} else {
+    startApp();
+}
