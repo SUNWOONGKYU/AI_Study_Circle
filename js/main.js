@@ -300,6 +300,16 @@ async function renderScheduleEvents() {
                         </div>
                     </div>`;
             }
+            if (ev.description) {
+                detailItems += `
+                    <div class="schedule-info-item">
+                        <div class="schedule-info-icon">📋</div>
+                        <div class="schedule-info-text">
+                            <div class="info-label">상세 내용</div>
+                            <div class="info-value">${escapeHtml(ev.description)}</div>
+                        </div>
+                    </div>`;
+            }
 
             // 참여 버튼 (schedule-highlight 안)
             const attendBtns = isFirst ? `
