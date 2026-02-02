@@ -531,6 +531,12 @@ section {
     opacity: 0.85;
 }
 
+/* ========== ATTEND BUTTON IN CARD ========== */
+.attend-btn-wrap {
+    margin-top: 1.5rem;
+    text-align: right;
+}
+
 /* ========== ATTEND INLINE (under schedule card) ========== */
 .attend-inline {
     margin-top: 1.5rem;

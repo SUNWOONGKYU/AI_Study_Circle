@@ -296,42 +296,41 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- 참여 신청 버튼 (박스 안 우측 하단) -->
+                        <div class="attend-btn-wrap" id="attend-section">
+                            <button type="button" class="btn-primary" id="attend-guest-btn" data-open-modal="login">이 모임 참여 신청하기 →</button>
+                            <div id="attend-logged-in" style="display:none;">
+                                <button type="button" class="btn-primary attend-toggle" id="attend-toggle-btn">이 모임 참여 신청하기 →</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- 모임 참여 신청 -->
-                <div class="attend-inline reveal" id="attend-section">
-                    <!-- 비로그인: 클릭 시 로그인 모달 -->
-                    <button type="button" class="btn-primary" id="attend-guest-btn" data-open-modal="login">이 모임 참여 신청하기 →</button>
-                    <!-- 로그인 상태: 참여 폼 -->
-                    <div id="attend-logged-in" style="display:none;">
-                        <button type="button" class="btn-primary attend-toggle" id="attend-toggle-btn">이 모임 참여 신청하기 →</button>
-                        <form id="attend-form" class="site-form attend-form-inline" style="display:none;">
-                            <input type="hidden" name="event_id" id="attend-event-id" value="">
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label for="a-name">이름</label>
-                                    <input type="text" id="a-name" name="name" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label for="a-contact">전화번호</label>
-                                    <input type="text" id="a-contact" name="contact" readonly>
-                                </div>
+                <!-- 참여 폼 (카드 밖) -->
+                <div class="attend-inline reveal">
+                    <form id="attend-form" class="site-form attend-form-inline" style="display:none;">
+                        <input type="hidden" name="event_id" id="attend-event-id" value="">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="a-name">이름</label>
+                                <input type="text" id="a-name" name="name" readonly>
                             </div>
                             <div class="form-group">
-                                <label for="a-note">메모 (선택)</label>
-                                <textarea id="a-note" name="note" rows="2" placeholder="늦을 수 있어요, 처음 참여합니다 등"></textarea>
+                                <label for="a-contact">전화번호</label>
+                                <input type="text" id="a-contact" name="contact" readonly>
                             </div>
-                            <button type="submit" class="btn-primary form-submit">참여 신청 완료 →</button>
-                            <div class="form-status" id="attend-status"></div>
-                        </form>
-                        <!-- 이미 참여한 경우 -->
-                        <div id="attend-already" style="display:none;" class="attend-already-msg">
-                            이미 이 모임에 참여 신청했습니다.
-                            <button type="button" class="btn-secondary btn-small" id="cancel-attend-btn">참여 취소</button>
                         </div>
+                        <div class="form-group">
+                            <label for="a-note">메모 (선택)</label>
+                            <textarea id="a-note" name="note" rows="2" placeholder="늦을 수 있어요, 처음 참여합니다 등"></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary form-submit">참여 신청 완료 →</button>
+                        <div class="form-status" id="attend-status"></div>
+                    </form>
+                    <div id="attend-already" style="display:none;" class="attend-already-msg">
+                        이미 이 모임에 참여 신청했습니다.
+                        <button type="button" class="btn-secondary btn-small" id="cancel-attend-btn">참여 취소</button>
                     </div>
-                    <!-- 미로그인 상태: 숨김 -->
                     <div id="attend-login-prompt" style="display:none;"></div>
                 </div>
             </div>
