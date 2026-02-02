@@ -484,6 +484,8 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
             for (let i = 0; i < 3; i++) {
                 try {
                     await DB.updateProfile(session.user.id, {
+                        name,
+                        phone,
                         interests,
                         member_type: memberType,
                         message
