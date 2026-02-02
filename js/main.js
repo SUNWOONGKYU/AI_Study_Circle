@@ -877,7 +877,7 @@ function startApp() {
         const statusEl = document.getElementById('attend-popup-status');
         const btn = form.querySelector('.form-submit');
         btn.disabled = true;
-        setStatus(statusEl, '신청 중...', 'loading');
+        setStatus(statusEl, '서버 연결 중 (v3m)...', 'loading');
 
         try {
             var session = await Auth.getSession();
