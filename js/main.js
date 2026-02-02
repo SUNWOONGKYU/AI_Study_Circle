@@ -23,10 +23,26 @@ function openModal(tab, options) {
         notice.style.display = (options && options.showNotice) ? 'block' : 'none';
     }
 
-    const isLogin = tab === 'login';
-    document.getElementById('signup-form').style.display = isLogin ? 'none' : 'block';
-    document.getElementById('login-form').style.display = isLogin ? 'block' : 'none';
-    document.getElementById('membership-title').textContent = isLogin ? '로그인' : '멤버 가입';
+    if (currentUser) {
+        // 로그인 상태: 프로필 현황 표시
+        document.getElementById('auth-container').style.display = 'none';
+        document.getElementById('profile-container').style.display = 'block';
+        document.getElementById('profile-view').style.display = 'block';
+        document.getElementById('profile-edit').style.display = 'none';
+        document.getElementById('membership-title').textContent = '프로필 현황';
+        if (currentProfile) {
+            fillProfileView();
+            fillProfileForm();
+        }
+    } else {
+        // 비로그인 상태: 가입/로그인 표시
+        document.getElementById('auth-container').style.display = 'block';
+        document.getElementById('profile-container').style.display = 'none';
+        const isLogin = tab === 'login';
+        document.getElementById('signup-form').style.display = isLogin ? 'none' : 'block';
+        document.getElementById('login-form').style.display = isLogin ? 'block' : 'none';
+        document.getElementById('membership-title').textContent = isLogin ? '로그인' : '멤버 가입';
+    }
 }
 
 function closeModal() {
