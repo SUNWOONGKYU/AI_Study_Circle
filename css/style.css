@@ -160,14 +160,16 @@ nav {
 }
 
 .brand-num {
-    font-family: 'Outfit', sans-serif;
-    font-weight: 900;
-    color: var(--accent-orange);
-    text-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 900 !important;
+    color: #f59e0b !important;
+    text-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+    -webkit-text-fill-color: #f59e0b !important;
 }
 
 .nav-logo .brand-num {
     font-size: 1.3rem;
+    margin-left: 0.15rem;
 }
 
 .footer-logo .brand-num {
@@ -178,6 +180,12 @@ nav {
     display: flex;
     gap: 2rem;
     list-style: none;
+    align-items: center;
+}
+
+#nav-login-link,
+#nav-signup-link {
+    margin-left: 0.5rem;
 }
 
 .nav-links a {
@@ -224,16 +232,20 @@ nav {
 
 .nav-login-btn {
     padding: 0.5rem 1.2rem;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(168, 85, 247, 0.4);
     border-radius: 8px;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
     font-size: 0.85rem;
+    color: var(--accent-purple) !important;
+    background: rgba(168, 85, 247, 0.08);
+    margin-left: 0.5rem;
     transition: all 0.3s ease;
 }
 
 .nav-login-btn:hover {
-    border-color: var(--accent-cyan);
-    background: rgba(0, 229, 255, 0.05);
+    border-color: var(--accent-purple);
+    background: rgba(168, 85, 247, 0.15);
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
 }
 
 .nav-login-btn::after { display: none !important; }
