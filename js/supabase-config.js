@@ -103,10 +103,16 @@ var DB = {
 
     // -- Attendance --
     async attendEvent(userId, eventId, note) {
-        var { error } = await _supabase
+        console.log('attendEvent called:', userId, eventId, note);
+        var result = await _supabase
             .from('attendance')
             .insert({ user_id: userId, event_id: eventId, note: note || '' });
-        if (error) throw error;
+        console.log('attendEvent result:', JSON.stringify(result));
+        if (result.error) {
+            alert('DB 에러: ' + JSON.stringify(result.error));
+            throw result.error;
+        }
+        alert('신청 성공!');
     },
 
     async cancelAttendance(userId, eventId) {
