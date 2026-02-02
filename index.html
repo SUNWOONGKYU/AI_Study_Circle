@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress"><div class="scroll-progress-fill"></div></div>
     <!-- Background Effects -->
     <div class="bg-grid"></div>
     <div class="bg-orb bg-orb-1"></div>
@@ -49,6 +51,7 @@
 
     <!-- Hero -->
     <section class="hero">
+        <canvas id="hero-canvas"></canvas>
         <div class="hero-inner">
             <div class="hero-badge">
                 <span class="dot"></span>
@@ -86,6 +89,13 @@
             </div>
         </div>
     </section>
+
+    <!-- Wave Divider -->
+    <div class="wave-divider">
+        <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,30 C360,60 720,0 1080,30 C1260,45 1380,20 1440,30 L1440,60 L0,60 Z" fill="var(--bg-primary)"/>
+        </svg>
+    </div>
 
     <!-- About -->
     <section id="about">
@@ -262,6 +272,13 @@
                         </div>
                         <div class="schedule-time">저녁 7:00 PM</div>
                         <span class="schedule-badge">✨ 1차 모임</span>
+                        <!-- 참여 신청 버튼 -->
+                        <div class="attend-btn-wrap" id="attend-section">
+                            <button type="button" class="btn-primary" id="attend-guest-btn" data-open-modal="login">이 모임 참여 신청하기 →</button>
+                            <div id="attend-logged-in" style="display:none;">
+                                <button type="button" class="btn-primary attend-toggle" id="attend-toggle-btn">이 모임 참여 신청하기 →</button>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="schedule-details">
@@ -294,13 +311,6 @@
                                     <div class="info-label">제공</div>
                                     <div class="info-value">간단한 샌드위치 & 음료</div>
                                 </div>
-                            </div>
-                        </div>
-                        <!-- 참여 신청 버튼 (박스 안 우측 하단) -->
-                        <div class="attend-btn-wrap" id="attend-section">
-                            <button type="button" class="btn-primary" id="attend-guest-btn" data-open-modal="login">이 모임 참여 신청하기 →</button>
-                            <div id="attend-logged-in" style="display:none;">
-                                <button type="button" class="btn-primary attend-toggle" id="attend-toggle-btn">이 모임 참여 신청하기 →</button>
                             </div>
                         </div>
                     </div>
