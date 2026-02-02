@@ -38,6 +38,50 @@ document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
     document.querySelector('.nav-links').classList.toggle('show');
 });
 
+// ========== Modal ==========
+const authModal = document.getElementById('auth-modal');
+const modalCloseBtn = document.getElementById('modal-close-btn');
+
+function openModal(tab) {
+    authModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    // 탭 전환
+    if (tab && !currentUser) {
+        document.querySelectorAll('.auth-tab').forEach(t => {
+            t.classList.toggle('active', t.dataset.tab === tab);
+        });
+        document.getElementById('signup-form').style.display = tab === 'signup' ? 'block' : 'none';
+        document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+    }
+}
+
+function closeModal() {
+    authModal.classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+// 모든 data-open-modal 버튼에서 모달 열기
+document.querySelectorAll('[data-open-modal]').forEach(el => {
+    el.addEventListener('click', (e) => {
+        e.preventDefault();
+        openModal(el.getAttribute('data-open-modal') || 'signup');
+    });
+});
+
+// 닫기 버튼
+if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
+
+// 배경 클릭으로 닫기
+if (authModal) authModal.addEventListener('click', (e) => {
+    if (e.target === authModal) closeModal();
+});
+
+// ESC 키로 닫기
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && authModal && authModal.classList.contains('open')) closeModal();
+});
+
 // ========== Status helper ==========
 function setStatus(el, message, type) {
     el.textContent = message;
@@ -421,49 +465,5 @@ document.querySelectorAll('.dropdown-item').forEach(item => {
     });
 });
 
-// ========== Modal ==========
-const authModal = document.getElementById('auth-modal');
-const modalCloseBtn = document.getElementById('modal-close-btn');
-
-function openModal(tab) {
-    authModal.classList.add('open');
-    document.body.style.overflow = 'hidden';
-
-    // 탭 전환
-    if (tab && !currentUser) {
-        document.querySelectorAll('.auth-tab').forEach(t => {
-            t.classList.toggle('active', t.dataset.tab === tab);
-        });
-        document.getElementById('signup-form').style.display = tab === 'signup' ? 'block' : 'none';
-        document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
-    }
-}
-
-function closeModal() {
-    authModal.classList.remove('open');
-    document.body.style.overflow = '';
-}
-
-// 모든 data-open-modal 버튼에서 모달 열기
-document.querySelectorAll('[data-open-modal]').forEach(el => {
-    el.addEventListener('click', (e) => {
-        e.preventDefault();
-        openModal(el.getAttribute('data-open-modal') || 'signup');
-    });
-});
-
-// 닫기 버튼
-modalCloseBtn.addEventListener('click', closeModal);
-
-// 배경 클릭으로 닫기
-authModal.addEventListener('click', (e) => {
-    if (e.target === authModal) closeModal();
-});
-
-// ESC 키로 닫기
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && authModal.classList.contains('open')) closeModal();
-});
-
 // ========== Init ==========
-initAuth();
+try { initAuth(); } catch(e) { console.error('Auth init error:', e); }
