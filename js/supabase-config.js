@@ -103,9 +103,11 @@ var DB = {
 
     // -- Attendance --
     async attendEvent(userId, eventId, note) {
-        var { error } = await _supabase
-            .from('attendance')
-            .insert({ user_id: userId, event_id: eventId, note: note || '' });
+        // RPC 함수로 RLS 우회 (SECURITY DEFINER)
+        var { error } = await _supabase.rpc('attend_event', {
+            p_event_id: eventId,
+            p_note: note || ''
+        });
         if (error) throw error;
     },
 

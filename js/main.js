@@ -865,7 +865,7 @@ function startApp() {
         if (e.target === popup) closePopup();
     });
 
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async function(e) {
         e.preventDefault();
         var statusEl = document.getElementById('attend-popup-status');
         var btn = form.querySelector('.form-submit');
@@ -879,40 +879,22 @@ function startApp() {
         btn.disabled = true;
         setStatus(statusEl, '신청 처리 중...', 'loading');
 
-        // 10초 타임아웃
-        var timedOut = false;
-        var timer = setTimeout(function() {
-            timedOut = true;
-            setStatus(statusEl, '서버 응답 시간 초과. 다시 시도해주세요.', 'error');
+        try {
+            await DB.attendEvent(currentUser.id, currentEventId, memo);
+            setStatus(statusEl, '참여 신청 완료!', 'success');
+            setTimeout(function() { closePopup(); checkAttendance(); }, 800);
+        } catch (err) {
+            var errMsg = (err && err.message) || String(err);
+            if (errMsg.includes('duplicate') || errMsg.includes('23505') || errMsg.includes('already')) {
+                setStatus(statusEl, '이미 참여 신청한 모임입니다.', 'error');
+                setTimeout(function() { closePopup(); checkAttendance(); }, 1000);
+            } else {
+                setStatus(statusEl, '신청 오류: ' + errMsg, 'error');
+                console.error('참여 신청 오류:', err);
+            }
+        } finally {
             btn.disabled = false;
-        }, 10000);
-
-        _supabase
-            .from('attendance')
-            .insert({ user_id: currentUser.id, event_id: currentEventId, note: memo || '' })
-            .then(function(result) {
-                if (timedOut) return;
-                clearTimeout(timer);
-                if (result.error) {
-                    var msg = result.error.message || JSON.stringify(result.error);
-                    if (msg.includes('duplicate') || result.error.code === '23505') {
-                        setStatus(statusEl, '이미 참여 신청한 모임입니다.', 'error');
-                        setTimeout(function() { closePopup(); checkAttendance(); }, 1000);
-                    } else {
-                        setStatus(statusEl, '신청 오류: ' + msg, 'error');
-                    }
-                } else {
-                    setStatus(statusEl, '참여 신청 완료!', 'success');
-                    setTimeout(function() { closePopup(); checkAttendance(); }, 800);
-                }
-                btn.disabled = false;
-            })
-            .catch(function(err) {
-                if (timedOut) return;
-                clearTimeout(timer);
-                setStatus(statusEl, '신청 오류: ' + (err.message || err), 'error');
-                btn.disabled = false;
-            });
+        }
     });
 })();
 
