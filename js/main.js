@@ -177,15 +177,21 @@ function escapeHtml(str) {
 }
 
 // ========== Helper: format event date ==========
-function formatEventDate(dateStr) {
+function formatEventDate(dateStr, dayLabel) {
     // dateStr: "2025-02-06" 형태
     const parts = dateStr.split('-');
-    const year = parseInt(parts[0]);
     const month = parseInt(parts[1]);
     const day = parseInt(parts[2]);
-    const date = new Date(year, month - 1, day); // 로컬 시간 확실히 보장
-    const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-    const dayName = dayNames[date.getDay()];
+    // day_label이 DB에 있으면 그대로 사용, 없으면 자동 계산
+    var dayName;
+    if (dayLabel) {
+        dayName = dayLabel;
+    } else {
+        const year = parseInt(parts[0]);
+        const date = new Date(year, month - 1, day);
+        const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+        dayName = dayNames[date.getDay()];
+    }
     return { display: `${month}.${day}`, dayName };
 }
 
@@ -215,7 +221,7 @@ async function renderScheduleEvents() {
         document.getElementById('attend-event-id').value = currentEventId;
 
         container.innerHTML = events.map((ev, idx) => {
-            const { display, dayName } = formatEventDate(ev.event_date);
+            const { display, dayName } = formatEventDate(ev.event_date, ev.day_label);
             const timeDisplay = formatEventTime(ev.event_time);
             const isFirst = idx === 0;
 

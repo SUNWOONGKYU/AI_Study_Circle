@@ -166,6 +166,7 @@ eventForm.addEventListener('submit', async (e) => {
         title: document.getElementById('ev-title').value.trim(),
         event_date: document.getElementById('ev-date').value,
         event_time: document.getElementById('ev-time').value || null,
+        day_label: document.getElementById('ev-day-label').value,
         location: document.getElementById('ev-location').value.trim(),
         address: document.getElementById('ev-address').value.trim(),
         map_url: document.getElementById('ev-map-url').value.trim(),
@@ -204,6 +205,7 @@ function editEvent(id) {
     document.getElementById('ev-title').value = ev.title;
     document.getElementById('ev-date').value = ev.event_date;
     document.getElementById('ev-time').value = ev.event_time ? ev.event_time.slice(0, 5) : '';
+    document.getElementById('ev-day-label').value = ev.day_label || '';
     document.getElementById('ev-location').value = ev.location || '';
     document.getElementById('ev-address').value = ev.address || '';
     document.getElementById('ev-map-url').value = ev.map_url || '';

@@ -22,6 +22,7 @@ CREATE TABLE events (
   title TEXT NOT NULL,
   event_date DATE NOT NULL,
   event_time TIME,
+  day_label TEXT DEFAULT '',
   location TEXT DEFAULT '',
   address TEXT DEFAULT '',
   map_url TEXT DEFAULT '',
