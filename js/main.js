@@ -140,13 +140,19 @@ function updateUI() {
         // 관리자 링크
         navAdminLink.style.display = (currentProfile && currentProfile.role === 'admin') ? 'block' : 'none';
 
-        // 멤버십 섹션 → 프로필 모드
+        // 멤버십 섹션 → 프로필 현황 모드
         authContainer.style.display = 'none';
         profileContainer.style.display = 'block';
-        membershipTitle.textContent = '내 프로필';
+        membershipTitle.textContent = '프로필 현황';
 
-        // 프로필 폼 채우기
-        if (currentProfile) fillProfileForm();
+        // 프로필 현황 채우기 + 수정폼 채우기
+        if (currentProfile) {
+            fillProfileView();
+            fillProfileForm();
+        }
+        // 현황 모드로 표시
+        document.getElementById('profile-view').style.display = 'block';
+        document.getElementById('profile-edit').style.display = 'none';
     } else {
         // 비로그인 상태
         navLoginLink.style.display = 'block';
@@ -160,6 +166,16 @@ function updateUI() {
 
     // 동적 참여 버튼 UI 업데이트
     updateAttendUI();
+}
+
+function fillProfileView() {
+    if (!currentProfile) return;
+    document.getElementById('pv-name').textContent = currentProfile.name || '-';
+    document.getElementById('pv-phone').textContent = currentProfile.phone || '-';
+    document.getElementById('pv-email').textContent = (currentUser && currentUser.email) || '-';
+    document.getElementById('pv-type').textContent = currentProfile.member_type || '-';
+    document.getElementById('pv-interests').textContent = (currentProfile.interests || []).join(', ') || '-';
+    document.getElementById('pv-message').textContent = currentProfile.message || '-';
 }
 
 function fillProfileForm() {
@@ -176,6 +192,20 @@ function fillProfileForm() {
         cb.checked = interests.includes(cb.value);
     });
 }
+
+// ========== Profile Edit/Cancel ==========
+document.getElementById('profile-edit-btn').addEventListener('click', () => {
+    document.getElementById('profile-view').style.display = 'none';
+    document.getElementById('profile-edit').style.display = 'block';
+    document.getElementById('membership-title').textContent = '프로필 수정';
+});
+
+document.getElementById('profile-cancel-btn').addEventListener('click', () => {
+    document.getElementById('profile-view').style.display = 'block';
+    document.getElementById('profile-edit').style.display = 'none';
+    document.getElementById('membership-title').textContent = '프로필 현황';
+    if (currentProfile) fillProfileForm(); // 수정 취소 시 원래값 복원
+});
 
 // ========== Helper: escape HTML ==========
 function escapeHtml(str) {
@@ -605,7 +635,14 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
             message
         });
         document.getElementById('nav-user-name').textContent = name;
+        fillProfileView();
         setStatus(statusEl, '프로필이 저장되었습니다.', 'success');
+        // 1초 후 현황 모드로 전환
+        setTimeout(() => {
+            document.getElementById('profile-view').style.display = 'block';
+            document.getElementById('profile-edit').style.display = 'none';
+            document.getElementById('membership-title').textContent = '프로필 현황';
+        }, 1000);
     } catch (err) {
         setStatus(statusEl, '저장 중 오류가 발생했습니다.', 'error');
     } finally {

@@ -1084,6 +1084,41 @@ section {
     font-weight: 700;
 }
 
+/* ========== PROFILE VIEW ========== */
+.profile-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+}
+.profile-info-full {
+    grid-column: 1 / -1;
+}
+.profile-info-item {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+}
+.profile-label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.profile-value {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    word-break: break-word;
+}
+@media (max-width: 600px) {
+    .profile-info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* ========== FOOTER ========== */
 footer {
     position: relative;
