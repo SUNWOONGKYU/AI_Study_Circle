@@ -382,27 +382,16 @@ function rebindAttendButtons() {
         });
     }
 
-    // 참여 신청 버튼: 클릭 시 바로 DB에 신청
+    // 참여 신청 버튼: 클릭 시 메모 팝업 열기
     const toggleBtn = document.getElementById('attend-toggle-btn');
     if (toggleBtn) {
-        toggleBtn.addEventListener('click', async () => {
+        toggleBtn.addEventListener('click', () => {
             if (!currentUser || !currentEventId) return;
-            const statusEl = document.getElementById('attend-status');
-            toggleBtn.disabled = true;
-            toggleBtn.textContent = '신청 중...';
-
-            try {
-                await DB.attendEvent(currentUser.id, currentEventId, '');
-                checkAttendance();
-            } catch (err) {
-                if (err.message && (err.message.includes('duplicate') || err.code === '23505')) {
-                    checkAttendance();
-                } else {
-                    if (statusEl) setStatus(statusEl, '신청 중 오류: ' + (err.message || err), 'error');
-                    toggleBtn.textContent = '이 모임 참여 신청하기 →';
-                }
-            } finally {
-                toggleBtn.disabled = false;
+            const popup = document.getElementById('attend-popup');
+            if (popup) {
+                document.getElementById('attend-memo').value = '';
+                document.getElementById('attend-popup-status').textContent = '';
+                popup.classList.add('open');
             }
         });
     }
@@ -852,6 +841,57 @@ function startApp() {
         .catch(function(e) { console.error('Init error:', e); });
     renderLocations().catch(function(e) { console.error('Locations render error:', e); });
 }
+
+// ========== 참여 신청 메모 팝업 ==========
+(function() {
+    const popup = document.getElementById('attend-popup');
+    if (!popup) return;
+    const closeBtn = document.getElementById('attend-popup-close');
+    const cancelBtn = document.getElementById('attend-popup-cancel');
+    const form = document.getElementById('attend-popup-form');
+
+    function closePopup() {
+        popup.classList.remove('open');
+    }
+
+    closeBtn.addEventListener('click', closePopup);
+    cancelBtn.addEventListener('click', closePopup);
+    popup.addEventListener('click', (e) => {
+        if (e.target === popup) closePopup();
+    });
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!currentUser || !currentEventId) return;
+
+        const memo = document.getElementById('attend-memo').value.trim();
+        const statusEl = document.getElementById('attend-popup-status');
+        const btn = form.querySelector('.form-submit');
+        btn.disabled = true;
+        setStatus(statusEl, '신청 중...', 'loading');
+
+        try {
+            await DB.attendEvent(currentUser.id, currentEventId, memo);
+            setStatus(statusEl, '참여 신청 완료!', 'success');
+            setTimeout(() => {
+                closePopup();
+                checkAttendance();
+            }, 800);
+        } catch (err) {
+            if (err.message && (err.message.includes('duplicate') || err.code === '23505')) {
+                setStatus(statusEl, '이미 참여 신청한 모임입니다.', 'error');
+                setTimeout(() => {
+                    closePopup();
+                    checkAttendance();
+                }, 1000);
+            } else {
+                setStatus(statusEl, '신청 중 오류: ' + (err.message || err), 'error');
+            }
+        } finally {
+            btn.disabled = false;
+        }
+    });
+})();
 
 // DOM 로드 완료 후 실행
 if (document.readyState === 'loading') {

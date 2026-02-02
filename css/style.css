@@ -1630,6 +1630,58 @@ footer {
     color: var(--text-muted);
 }
 
+/* 참여 신청 메모 팝업 */
+.attend-popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.attend-popup-overlay.open {
+    display: flex;
+}
+
+.attend-popup-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 450px;
+    width: 100%;
+    position: relative;
+}
+
+.attend-popup-content h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--accent-cyan);
+}
+
+.attend-popup-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.attend-popup-close:hover {
+    color: var(--text-primary);
+}
+
 .event-form-card {
     max-width: none;
 }

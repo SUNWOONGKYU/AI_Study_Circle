@@ -526,6 +526,26 @@
     </div>
 
 
+    <!-- 참여 신청 메모 팝업 -->
+    <div class="attend-popup-overlay" id="attend-popup">
+        <div class="attend-popup-content">
+            <button class="attend-popup-close" id="attend-popup-close">&times;</button>
+            <h3>모임 참여 신청</h3>
+            <p style="color:var(--text-secondary); margin-bottom:1rem; font-size:0.9rem;">메모를 남길 수 있습니다 (선택)</p>
+            <form id="attend-popup-form" class="site-form">
+                <div class="form-group">
+                    <label for="attend-memo">메모</label>
+                    <textarea id="attend-memo" rows="3" placeholder="늦을 수 있어요, 처음 참여합니다 등"></textarea>
+                </div>
+                <div style="display:flex; gap:0.5rem;">
+                    <button type="submit" class="btn-primary form-submit">참여 신청하기 →</button>
+                    <button type="button" class="btn-secondary" id="attend-popup-cancel">취소</button>
+                </div>
+                <div class="form-status" id="attend-popup-status"></div>
+            </form>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer>
         <div class="footer-inner">
@@ -541,6 +561,6 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
     <script src="js/supabase-config.js?v=20260202e"></script>
     <script src="js/animations.js?v=20260202e"></script>
-    <script src="js/main.js?v=20260203d"></script>
+    <script src="js/main.js?v=20260203e"></script>
 </body>
 </html>
