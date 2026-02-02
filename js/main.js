@@ -880,10 +880,22 @@ function startApp() {
         setStatus(statusEl, '신청 중...', 'loading');
 
         try {
-            var res = await _supabase
-                .from('attendance')
-                .insert({ user_id: currentUser.id, event_id: currentEventId, note: memo || '' });
-            if (res.error) throw res.error;
+            var session = await Auth.getSession();
+            var token = session ? session.access_token : SUPABASE_ANON_KEY;
+            var fetchRes = await fetch(SUPABASE_URL + '/rest/v1/attendance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': 'Bearer ' + token,
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({ user_id: currentUser.id, event_id: currentEventId, note: memo || '' })
+            });
+            if (!fetchRes.ok) {
+                var errBody = await fetchRes.text();
+                throw new Error(errBody);
+            }
             setStatus(statusEl, '참여 신청 완료!', 'success');
             setTimeout(() => {
                 closePopup();
