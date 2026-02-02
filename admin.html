@@ -59,6 +59,7 @@
                 <button class="admin-tab active" data-tab="members">멤버 관리</button>
                 <button class="admin-tab" data-tab="events">모임 관리</button>
                 <button class="admin-tab" data-tab="locations">장소 관리</button>
+                <button class="admin-tab" data-tab="inquiries">문의 관리</button>
             </div>
 
             <!-- 멤버 관리 -->
@@ -263,11 +264,37 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 문의 관리 -->
+            <div id="panel-inquiries" class="admin-panel">
+                <div class="admin-card">
+                    <h3>문의 목록</h3>
+                    <p id="inquiry-count" style="margin-bottom:1rem; color:var(--text-muted); font-size:0.85rem;"></p>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table" id="inquiries-table">
+                            <thead>
+                                <tr>
+                                    <th>이름</th>
+                                    <th>전화번호</th>
+                                    <th>이메일</th>
+                                    <th>제목</th>
+                                    <th>내용</th>
+                                    <th>접수일</th>
+                                    <th>관리</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inquiries-tbody">
+                                <tr><td colspan="7" class="admin-loading">로딩 중...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js?v=20260202b"></script>
-    <script src="js/admin.js?v=20260202b"></script>
+    <script src="js/supabase-config.js?v=20260202e"></script>
+    <script src="js/admin.js?v=20260202e"></script>
 </body>
 </html>

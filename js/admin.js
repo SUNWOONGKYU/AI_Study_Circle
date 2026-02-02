@@ -35,6 +35,7 @@ async function initAdmin() {
         loadMembers();
         loadEvents();
         loadLocations();
+        loadInquiries();
     } catch (e) {
         showDenied();
     }
@@ -431,6 +432,53 @@ async function deleteMember(userId, displayName) {
         loadMembers();
     } catch (e) {
         alert('회원 삭제 중 오류가 발생했습니다: ' + (e.message || e));
+    }
+}
+
+// ========== Inquiries ==========
+let allInquiries = [];
+
+async function loadInquiries() {
+    try {
+        allInquiries = await DB.getAllInquiries();
+        renderInquiries(allInquiries);
+    } catch (e) {
+        document.getElementById('inquiries-tbody').innerHTML =
+            '<tr><td colspan="7" class="admin-empty">문의 목록을 불러올 수 없습니다.</td></tr>';
+    }
+}
+
+function renderInquiries(inquiries) {
+    const tbody = document.getElementById('inquiries-tbody');
+    if (inquiries.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="admin-empty">접수된 문의가 없습니다.</td></tr>';
+        document.getElementById('inquiry-count').textContent = '';
+        return;
+    }
+
+    tbody.innerHTML = inquiries.map(inq => {
+        const date = inq.created_at ? new Date(inq.created_at).toLocaleDateString('ko-KR') : '-';
+        return `<tr>
+            <td>${escapeHtml(inq.name || '-')}</td>
+            <td>${escapeHtml(inq.phone || '-')}</td>
+            <td>${escapeHtml(inq.email || '-')}</td>
+            <td>${escapeHtml(inq.subject || '-')}</td>
+            <td title="${escapeHtml(inq.message || '')}">${escapeHtml((inq.message || '').substring(0, 50))}${(inq.message || '').length > 50 ? '...' : ''}</td>
+            <td>${date}</td>
+            <td><button class="btn-secondary btn-small" onclick="deleteInquiry(${inq.id})" style="color:var(--accent-pink);">삭제</button></td>
+        </tr>`;
+    }).join('');
+
+    document.getElementById('inquiry-count').textContent = `총 ${inquiries.length}건`;
+}
+
+async function deleteInquiry(id) {
+    if (!confirm('이 문의를 삭제하시겠습니까?')) return;
+    try {
+        await DB.deleteInquiry(id);
+        loadInquiries();
+    } catch (e) {
+        alert('삭제 중 오류가 발생했습니다.');
     }
 }
 
