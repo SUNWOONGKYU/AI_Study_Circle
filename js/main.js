@@ -865,55 +865,54 @@ function startApp() {
         if (e.target === popup) closePopup();
     });
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', function(e) {
         e.preventDefault();
+        var statusEl = document.getElementById('attend-popup-status');
+        var btn = form.querySelector('.form-submit');
+
         if (!currentUser || !currentEventId) {
-            const statusEl = document.getElementById('attend-popup-status');
             setStatus(statusEl, '로그인 또는 모임 정보를 확인해주세요.', 'error');
             return;
         }
 
-        const memo = document.getElementById('attend-memo').value.trim();
-        const statusEl = document.getElementById('attend-popup-status');
-        const btn = form.querySelector('.form-submit');
+        var memo = document.getElementById('attend-memo').value.trim();
         btn.disabled = true;
-        setStatus(statusEl, '서버 연결 중 (v3m)...', 'loading');
+        setStatus(statusEl, '신청 처리 중...', 'loading');
 
-        try {
-            var session = await Auth.getSession();
-            var token = session ? session.access_token : SUPABASE_ANON_KEY;
-            var fetchRes = await fetch(SUPABASE_URL + '/rest/v1/attendance', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': 'Bearer ' + token,
-                    'Prefer': 'return=minimal'
-                },
-                body: JSON.stringify({ user_id: currentUser.id, event_id: currentEventId, note: memo || '' })
-            });
-            if (!fetchRes.ok) {
-                var errBody = await fetchRes.text();
-                throw new Error(errBody);
-            }
-            setStatus(statusEl, '참여 신청 완료!', 'success');
-            setTimeout(() => {
-                closePopup();
-                checkAttendance();
-            }, 800);
-        } catch (err) {
-            if (err.message && (err.message.includes('duplicate') || err.code === '23505')) {
-                setStatus(statusEl, '이미 참여 신청한 모임입니다.', 'error');
-                setTimeout(() => {
-                    closePopup();
-                    checkAttendance();
-                }, 1000);
-            } else {
-                setStatus(statusEl, '신청 중 오류: ' + (err.message || err), 'error');
-            }
-        } finally {
+        // 10초 타임아웃
+        var timedOut = false;
+        var timer = setTimeout(function() {
+            timedOut = true;
+            setStatus(statusEl, '서버 응답 시간 초과. 다시 시도해주세요.', 'error');
             btn.disabled = false;
-        }
+        }, 10000);
+
+        _supabase
+            .from('attendance')
+            .insert({ user_id: currentUser.id, event_id: currentEventId, note: memo || '' })
+            .then(function(result) {
+                if (timedOut) return;
+                clearTimeout(timer);
+                if (result.error) {
+                    var msg = result.error.message || JSON.stringify(result.error);
+                    if (msg.includes('duplicate') || result.error.code === '23505') {
+                        setStatus(statusEl, '이미 참여 신청한 모임입니다.', 'error');
+                        setTimeout(function() { closePopup(); checkAttendance(); }, 1000);
+                    } else {
+                        setStatus(statusEl, '신청 오류: ' + msg, 'error');
+                    }
+                } else {
+                    setStatus(statusEl, '참여 신청 완료!', 'success');
+                    setTimeout(function() { closePopup(); checkAttendance(); }, 800);
+                }
+                btn.disabled = false;
+            })
+            .catch(function(err) {
+                if (timedOut) return;
+                clearTimeout(timer);
+                setStatus(statusEl, '신청 오류: ' + (err.message || err), 'error');
+                btn.disabled = false;
+            });
     });
 })();
 
