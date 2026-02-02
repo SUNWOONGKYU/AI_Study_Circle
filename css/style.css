@@ -1160,6 +1160,15 @@ footer {
     color: var(--text-muted);
 }
 
+.footer-since {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    opacity: 0.6;
+    margin-top: 0.5rem;
+    letter-spacing: 1px;
+}
+
 .footer-admin {
     margin-left: 2rem;
     font-size: 0.6rem;
