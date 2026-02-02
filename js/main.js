@@ -514,6 +514,7 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
                     await DB.updateProfile(userId, {
                         name,
                         phone,
+                        email,
                         interests,
                         member_type: memberType,
                         message

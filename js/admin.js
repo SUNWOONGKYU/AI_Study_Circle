@@ -86,7 +86,7 @@ function renderMembers(members) {
         return `<tr>
             <td>${escapeHtml(m.name || '-')}</td>
             <td>${escapeHtml(m.phone || '-')}</td>
-            <td>${escapeHtml(m.id ? '(가입됨)' : '-')}</td>
+            <td>${escapeHtml(m.email || '-')}</td>
             <td>${escapeHtml(interests || '-')}</td>
             <td>${escapeHtml(m.member_type || '-')}</td>
             <td>${date}</td>
