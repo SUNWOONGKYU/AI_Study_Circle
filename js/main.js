@@ -300,7 +300,8 @@ async function renderScheduleEvents() {
         }
 
     } catch (e) {
-        container.innerHTML = '<div class="admin-empty" style="text-align:center; padding:3rem 1rem; color:var(--text-muted);">모임 정보를 불러올 수 없습니다.</div>';
+        console.error('renderScheduleEvents error:', e);
+        container.innerHTML = '<div style="text-align:center; padding:3rem 1rem; color:var(--accent-pink);">모임 로드 오류: ' + (e.message || e) + '</div>';
     }
 }
 
@@ -400,7 +401,8 @@ async function renderLocations() {
         }).join('');
 
     } catch (e) {
-        container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:2rem; color:var(--text-muted);">장소 정보를 불러올 수 없습니다.</div>';
+        console.error('renderLocations error:', e);
+        container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:2rem; color:var(--accent-pink);">장소 로드 오류: ' + (e.message || e) + '</div>';
     }
 }
 
