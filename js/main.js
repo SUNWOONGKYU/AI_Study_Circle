@@ -246,7 +246,6 @@ async function renderScheduleEvents() {
 
         // 첫 번째 활성 이벤트를 참여 신청용으로 설정
         currentEventId = events[0].id;
-        document.getElementById('attend-event-id').value = currentEventId;
 
         container.innerHTML = events.map((ev, idx) => {
             const { display, dayName } = formatEventDate(ev.event_date, ev.day_label);
@@ -754,7 +753,28 @@ document.getElementById('password-form').addEventListener('submit', async (e) =>
     }
 });
 
-// ========== Inquiry Form ==========
+// ========== Inquiry Modal ==========
+const inquiryModal = document.getElementById('inquiry-modal');
+
+document.getElementById('nav-inquiry-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    fillInquiryForm();
+    inquiryModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+});
+
+document.getElementById('inquiry-close-btn').addEventListener('click', () => {
+    inquiryModal.classList.remove('open');
+    document.body.style.overflow = '';
+});
+
+inquiryModal.addEventListener('click', (e) => {
+    if (e.target === inquiryModal) {
+        inquiryModal.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+});
+
 function fillInquiryForm() {
     if (currentUser && currentProfile) {
         document.getElementById('inq-name').value = currentProfile.name || '';
