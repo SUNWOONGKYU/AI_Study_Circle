@@ -465,12 +465,40 @@ function renderInquiries(inquiries) {
             <td>${escapeHtml(inq.subject || '-')}</td>
             <td title="${escapeHtml(inq.message || '')}">${escapeHtml((inq.message || '').substring(0, 50))}${(inq.message || '').length > 50 ? '...' : ''}</td>
             <td>${date}</td>
-            <td><button class="btn-secondary btn-small" onclick="deleteInquiry(${inq.id})" style="color:var(--accent-pink);">삭제</button></td>
+            <td>
+                <button class="btn-secondary btn-small" onclick="viewInquiryDetail(${inq.id})">상세</button>
+                <button class="btn-secondary btn-small" onclick="deleteInquiry(${inq.id})" style="color:var(--accent-pink);">삭제</button>
+            </td>
         </tr>`;
     }).join('');
 
     document.getElementById('inquiry-count').textContent = `총 ${inquiries.length}건`;
 }
+
+function viewInquiryDetail(id) {
+    const inq = allInquiries.find(i => i.id === id);
+    if (!inq) return;
+
+    document.getElementById('inq-detail-name').textContent = inq.name || '-';
+    document.getElementById('inq-detail-phone').textContent = inq.phone || '-';
+    document.getElementById('inq-detail-email').textContent = inq.email || '-';
+    document.getElementById('inq-detail-subject').textContent = inq.subject || '-';
+    document.getElementById('inq-detail-message').textContent = inq.message || '-';
+    document.getElementById('inq-detail-date').textContent =
+        inq.created_at ? new Date(inq.created_at).toLocaleDateString('ko-KR') : '-';
+
+    document.getElementById('inquiry-detail-modal').classList.add('open');
+}
+
+document.getElementById('inquiry-detail-close').addEventListener('click', () => {
+    document.getElementById('inquiry-detail-modal').classList.remove('open');
+});
+
+document.getElementById('inquiry-detail-modal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) {
+        e.currentTarget.classList.remove('open');
+    }
+});
 
 async function deleteInquiry(id) {
     if (!confirm('이 문의를 삭제하시겠습니까?')) return;

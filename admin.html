@@ -93,6 +93,7 @@
 
             <!-- 모임 관리 -->
             <div id="panel-events" class="admin-panel">
+                <div class="admin-horizontal">
                 <!-- 모임 등록 -->
                 <div class="admin-card event-form-card">
                     <h3 id="event-form-title">새 모임 등록</h3>
@@ -182,6 +183,8 @@
                     </div>
                 </div>
 
+                </div><!-- /admin-horizontal -->
+
                 <!-- 참여자 명단 (동적) -->
                 <div class="admin-card" id="attendees-card" style="display:none;">
                     <h3 id="attendees-title">참여자 명단</h3>
@@ -203,6 +206,7 @@
             </div>
             <!-- 장소 관리 -->
             <div id="panel-locations" class="admin-panel">
+                <div class="admin-horizontal">
                 <!-- 장소 등록/수정 -->
                 <div class="admin-card event-form-card">
                     <h3 id="loc-form-title">새 장소 등록</h3>
@@ -263,6 +267,7 @@
                         </table>
                     </div>
                 </div>
+                </div><!-- /admin-horizontal -->
             </div>
 
             <!-- 문의 관리 -->
@@ -293,8 +298,42 @@
         </div>
     </div>
 
+    <!-- 문의 상세보기 모달 -->
+    <div class="inquiry-detail-modal" id="inquiry-detail-modal">
+        <div class="inquiry-detail-content">
+            <button class="inquiry-detail-close" id="inquiry-detail-close">&times;</button>
+            <h3>문의 상세</h3>
+            <div class="inquiry-detail-grid">
+                <div class="inquiry-detail-item">
+                    <span class="inquiry-detail-label">이름</span>
+                    <span class="inquiry-detail-value" id="inq-detail-name">-</span>
+                </div>
+                <div class="inquiry-detail-item">
+                    <span class="inquiry-detail-label">전화번호</span>
+                    <span class="inquiry-detail-value" id="inq-detail-phone">-</span>
+                </div>
+                <div class="inquiry-detail-item">
+                    <span class="inquiry-detail-label">이메일</span>
+                    <span class="inquiry-detail-value" id="inq-detail-email">-</span>
+                </div>
+                <div class="inquiry-detail-item">
+                    <span class="inquiry-detail-label">접수일</span>
+                    <span class="inquiry-detail-value" id="inq-detail-date">-</span>
+                </div>
+            </div>
+            <div class="inquiry-detail-item" style="margin-top:1rem;">
+                <span class="inquiry-detail-label">제목</span>
+                <span class="inquiry-detail-value" id="inq-detail-subject">-</span>
+            </div>
+            <div class="inquiry-detail-item" style="margin-top:1rem;">
+                <span class="inquiry-detail-label">내용</span>
+                <div class="inquiry-detail-message" id="inq-detail-message">-</div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js?v=20260202e"></script>
-    <script src="js/admin.js?v=20260202e"></script>
+    <script src="js/supabase-config.js?v=20260203a"></script>
+    <script src="js/admin.js?v=20260203a"></script>
 </body>
 </html>

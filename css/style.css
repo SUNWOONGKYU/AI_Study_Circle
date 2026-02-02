@@ -1628,11 +1628,130 @@ footer {
 }
 
 .event-form-card {
-    max-width: 700px;
+    max-width: none;
+}
+
+/* 모임/장소 패널 가로 레이아웃 */
+.admin-horizontal {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.admin-horizontal .event-form-card {
+    position: sticky;
+    top: 5rem;
+}
+
+.admin-horizontal .event-form-card .form-grid {
+    grid-template-columns: 1fr;
+}
+
+.admin-horizontal .admin-table {
+    table-layout: auto;
+}
+
+@media (max-width: 1024px) {
+    .admin-horizontal {
+        grid-template-columns: 1fr;
+    }
 }
 
 .attendee-list {
     margin-top: 1rem;
+}
+
+/* 문의 상세보기 모달 */
+.inquiry-detail-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.inquiry-detail-modal.open {
+    display: flex;
+}
+
+.inquiry-detail-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 600px;
+    width: 100%;
+    position: relative;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.inquiry-detail-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.inquiry-detail-close:hover {
+    color: var(--text-primary);
+}
+
+.inquiry-detail-content h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--accent-cyan);
+}
+
+.inquiry-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.inquiry-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.inquiry-detail-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.inquiry-detail-value {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.inquiry-detail-message {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 80px;
 }
 
 /* ========== SCROLL PROGRESS BAR ========== */
