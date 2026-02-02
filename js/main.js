@@ -356,9 +356,58 @@ function updateAttendUI() {
     }
 }
 
+// ========== Render locations from DB ==========
+async function renderLocations() {
+    const container = document.getElementById('locations-container');
+    if (!container) return;
+
+    try {
+        const locations = await DB.getLocations();
+
+        if (locations.length === 0) {
+            container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:2rem; color:var(--text-muted);">등록된 장소가 없습니다.</div>';
+            return;
+        }
+
+        const icons = { primary: '🟡', secondary: '🏠' };
+        const badges = { primary: '메인 장소', secondary: '보조 장소' };
+
+        container.innerHTML = locations.map(loc => {
+            const icon = icons[loc.loc_type] || '📍';
+            const badge = badges[loc.loc_type] || '장소';
+            const isPrimary = loc.loc_type === 'primary';
+
+            const mapLink = loc.map_url
+                ? `<a href="${escapeHtml(loc.map_url)}" target="_blank" rel="noopener noreferrer" class="loc-link">네이버 지도 →</a>`
+                : '';
+
+            const noteStyle = isPrimary
+                ? ''
+                : ' style="background: rgba(168, 85, 247, 0.05);"';
+
+            const noteHtml = loc.note
+                ? `<div class="loc-note"${noteStyle}>${escapeHtml(loc.note)}</div>`
+                : '';
+
+            return `
+                <div class="location-card ${escapeHtml(loc.loc_type)}">
+                    <span class="loc-badge">${escapeHtml(badge)}</span>
+                    <h3>${icon} ${escapeHtml(loc.name)}</h3>
+                    <p class="loc-address">${escapeHtml(loc.address || '')}</p>
+                    ${mapLink}
+                    ${noteHtml}
+                </div>`;
+        }).join('');
+
+    } catch (e) {
+        container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:2rem; color:var(--text-muted);">장소 정보를 불러올 수 없습니다.</div>';
+    }
+}
+
 // ========== Load first active event (legacy wrapper) ==========
 async function loadFirstEvent() {
     await renderScheduleEvents();
+    await renderLocations();
 }
 
 async function checkAttendance() {

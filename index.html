@@ -342,24 +342,9 @@
             <h2 class="section-title">모임 장소</h2>
             <p class="section-desc">유연하게, 다양한 장소를 활용합니다.</p>
 
-            <div class="location-grid">
-                <div class="location-card primary">
-                    <span class="loc-badge">메인 장소</span>
-                    <h3>🟡 옐로펀치 성수메사</h3>
-                    <p class="loc-address">성수일로 8길 5 A동 607호 (성수동2가 248-55)</p>
-                    <a href="https://naver.me/5duYsK0I" target="_blank" rel="noopener noreferrer" class="loc-link">네이버 지도 →</a>
-                    <div class="loc-note">
-                        AI 연구, 바이브코딩, 서비스 개발/창업 모임, 네트워킹에 딱 맞는 공간
-                    </div>
-                </div>
-                <div class="location-card secondary">
-                    <span class="loc-badge">보조 장소</span>
-                    <h3>🏠 고척동 공간</h3>
-                    <p class="loc-address">아담하고 포근한 공간 (주 1회 활용 가능)</p>
-                    <div class="loc-note" style="background: rgba(168, 85, 247, 0.05);">
-                        기타: 강남역 부근 / 양재역 부근 공유오피스 (파이브스팟, 토즈 등) 활용 가능. 무상 제공 장소가 있으면 적극 활용
-                    </div>
-                </div>
+            <!-- 동적 장소 목록 (DB에서 로드) -->
+            <div class="location-grid" id="locations-container">
+                <div class="admin-loading" style="grid-column:1/-1; text-align:center;">장소 정보를 불러오는 중...</div>
             </div>
         </div>
     </section>
