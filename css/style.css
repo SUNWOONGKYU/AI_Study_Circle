@@ -1639,17 +1639,7 @@ footer {
     transform-style: preserve-3d;
 }
 
-/* ========== SCROLL ANIMATION (GSAP fallback) ========== */
-.reveal {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
+/* ========== SCROLL ANIMATION (removed — GSAP handles all animations) ========== */
 
 /* ========== REDUCED MOTION ========== */
 @media (prefers-reduced-motion: reduce) {
@@ -1658,11 +1648,6 @@ footer {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
-    }
-
-    .reveal {
-        opacity: 1 !important;
-        transform: none !important;
     }
 
     .float-keyword {

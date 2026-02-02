@@ -77,15 +77,12 @@
             for (let i = 0; i < this.particles.length; i++) {
                 const p = this.particles[i];
 
-                // Update position
                 p.x += p.vx;
                 p.y += p.vy;
 
-                // Bounce off edges
                 if (p.x < 0 || p.x > this.canvas.width) p.vx *= -1;
                 if (p.y < 0 || p.y > this.canvas.height) p.vy *= -1;
 
-                // Mouse repulsion
                 const dx = p.x - this.mouse.x;
                 const dy = p.y - this.mouse.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
@@ -95,17 +92,14 @@
                     p.vy += (dy / dist) * force * 0.3;
                 }
 
-                // Damping
                 p.vx *= 0.99;
                 p.vy *= 0.99;
 
-                // Draw particle
                 this.ctx.beginPath();
                 this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
                 this.ctx.fillStyle = `rgba(0, 229, 255, ${p.opacity})`;
                 this.ctx.fill();
 
-                // Connect nearby particles
                 for (let j = i + 1; j < this.particles.length; j++) {
                     const p2 = this.particles[j];
                     const d = Math.sqrt((p.x - p2.x) ** 2 + (p.y - p2.y) ** 2);
@@ -143,7 +137,6 @@
                 el.className = 'float-keyword';
                 el.textContent = text;
 
-                // Random positioning
                 el.style.left = Math.random() * 80 + 10 + '%';
                 el.style.top = Math.random() * 70 + 15 + '%';
                 el.style.animationDelay = (i * -2.5) + 's';
@@ -176,13 +169,11 @@
                 idx++;
                 setTimeout(type, speed);
             } else {
-                // Restore original HTML with <br> tags after typing
                 subtitle.innerHTML = originalHTML;
                 subtitle.classList.remove('typing-active');
             }
         }
 
-        // Start typing after hero appears
         setTimeout(type, 1200);
     }
 
@@ -204,10 +195,12 @@
     }
 
     // ========== 5. GSAP Scroll Animations ==========
+    // NOTE: NO opacity animations — only transform (y, x, scale, rotation).
+    // This guarantees elements are always visible even if GSAP/ScrollTrigger fails.
     function initScrollAnimations() {
         gsap.registerPlugin(ScrollTrigger);
 
-        // -- Section fade-in + scale --
+        // -- Section slide-up + scale --
         gsap.utils.toArray('section:not(.hero)').forEach(section => {
             gsap.from(section, {
                 scrollTrigger: {
@@ -216,15 +209,14 @@
                     end: 'top 50%',
                     toggleActions: 'play none none none'
                 },
-                opacity: 0,
-                y: 60,
-                scale: 0.97,
+                y: 40,
+                scale: 0.98,
                 duration: 0.8,
                 ease: 'power3.out'
             });
         });
 
-        // -- Section labels & titles: line stagger --
+        // -- Section labels & titles --
         gsap.utils.toArray('.section-label, .section-title, .section-desc').forEach(el => {
             gsap.from(el, {
                 scrollTrigger: {
@@ -232,8 +224,7 @@
                     start: 'top 85%',
                     toggleActions: 'play none none none'
                 },
-                opacity: 0,
-                y: 30,
+                y: 20,
                 duration: 0.6,
                 ease: 'power2.out'
             });
@@ -248,8 +239,7 @@
                     start: 'top 80%',
                     toggleActions: 'play none none none'
                 },
-                opacity: 0,
-                y: 50,
+                y: 30,
                 rotation: 2,
                 stagger: 0.1,
                 duration: 0.6,
@@ -266,8 +256,7 @@
                     start: 'top 80%',
                     toggleActions: 'play none none none'
                 },
-                opacity: 0,
-                y: 40,
+                y: 30,
                 rotation: -1,
                 stagger: 0.08,
                 duration: 0.5,
@@ -283,9 +272,8 @@
                     start: 'top 80%',
                     toggleActions: 'play none none none'
                 },
-                opacity: 0,
-                y: 50,
-                scale: 0.95,
+                y: 30,
+                scale: 0.96,
                 duration: 0.8,
                 ease: 'power3.out'
             });
@@ -300,8 +288,7 @@
                     start: 'top 80%',
                     toggleActions: 'play none none none'
                 },
-                opacity: 0,
-                x: -30,
+                x: -20,
                 stagger: 0.15,
                 duration: 0.6,
                 ease: 'power2.out'
@@ -317,8 +304,7 @@
                     start: 'top 80%',
                     toggleActions: 'play none none none'
                 },
-                opacity: 0,
-                y: 40,
+                y: 30,
                 stagger: 0.15,
                 duration: 0.7,
                 ease: 'power2.out'
@@ -327,29 +313,33 @@
 
         // -- About grid --
         gsap.utils.toArray('.about-grid').forEach(grid => {
-            gsap.from(grid.querySelector('.about-text'), {
-                scrollTrigger: {
-                    trigger: grid,
-                    start: 'top 80%',
-                    toggleActions: 'play none none none'
-                },
-                opacity: 0,
-                x: -40,
-                duration: 0.8,
-                ease: 'power3.out'
-            });
-            gsap.from(grid.querySelector('.about-values'), {
-                scrollTrigger: {
-                    trigger: grid,
-                    start: 'top 80%',
-                    toggleActions: 'play none none none'
-                },
-                opacity: 0,
-                x: 40,
-                duration: 0.8,
-                delay: 0.2,
-                ease: 'power3.out'
-            });
+            const aboutText = grid.querySelector('.about-text');
+            const aboutValues = grid.querySelector('.about-values');
+            if (aboutText) {
+                gsap.from(aboutText, {
+                    scrollTrigger: {
+                        trigger: grid,
+                        start: 'top 80%',
+                        toggleActions: 'play none none none'
+                    },
+                    x: -30,
+                    duration: 0.8,
+                    ease: 'power3.out'
+                });
+            }
+            if (aboutValues) {
+                gsap.from(aboutValues, {
+                    scrollTrigger: {
+                        trigger: grid,
+                        start: 'top 80%',
+                        toggleActions: 'play none none none'
+                    },
+                    x: 30,
+                    duration: 0.8,
+                    delay: 0.2,
+                    ease: 'power3.out'
+                });
+            }
         });
 
         // -- Value items stagger --
@@ -361,14 +351,12 @@
                     start: 'top 80%',
                     toggleActions: 'play none none none'
                 },
-                opacity: 0,
-                x: 30,
+                x: 20,
                 stagger: 0.1,
                 duration: 0.5,
                 ease: 'power2.out'
             });
         });
-
     }
 
     // ========== 6. Parallax ==========
@@ -431,7 +419,6 @@
             const target = parseInt(match[1]);
             const suffix = text.replace(/^\d+/, '');
 
-            // Reset to 0
             stat.textContent = '0' + suffix;
 
             gsap.to({ val: 0 }, {
@@ -490,25 +477,9 @@
         });
     }
 
-    // ========== Wave Divider Animation ==========
-    function initWaveDividers() {
-        gsap.utils.toArray('.wave-divider').forEach(wave => {
-            gsap.from(wave, {
-                scrollTrigger: {
-                    trigger: wave,
-                    start: 'top 95%',
-                    toggleActions: 'play none none none'
-                },
-                opacity: 0,
-                duration: 1,
-                ease: 'power2.out'
-            });
-        });
-    }
-
     // ========== Init Everything ==========
     function init() {
-        // Neutralize .reveal CSS class — GSAP handles all scroll animations now
+        // Remove any leftover .reveal classes
         document.querySelectorAll('.reveal').forEach(el => {
             el.classList.remove('reveal');
         });
@@ -542,7 +513,6 @@
             initCountUp();
             initProgressBar();
             initNavScroll();
-            initWaveDividers();
         }
 
         // Card tilt (no GSAP dependency)
