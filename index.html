@@ -95,6 +95,7 @@
                         룰보다는 자율성에 초점을 두고, 오픈마인드와 유연함에
                         진정성을 담아 꾸준히 이어가는 커뮤니티입니다.
                     </p>
+                    <a href="https://www.facebook.com/share/p/1C2Y49TPbn/" target="_blank" rel="noopener noreferrer" class="about-origin-link">📋 이 모임이 시작된 원문 보기 (Facebook) →</a>
                 </div>
 
                 <div class="about-values">
@@ -286,6 +287,30 @@
                 </div>
             </div>
 
+            <!-- 이 모임 참여 신청 (바로 아래 배치) -->
+            <div class="attend-inline reveal">
+                <button type="button" class="btn-primary attend-toggle" data-event="2025-02-06 1차 킥오프">이 모임 참여 신청하기 →</button>
+                <form id="attend-form" class="site-form attend-form-inline" style="display: none;">
+                    <input type="hidden" name="event" value="2025-02-06 1차 킥오프">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="a-name">이름 <span class="required">*</span></label>
+                            <input type="text" id="a-name" name="name" required placeholder="홍길동">
+                        </div>
+                        <div class="form-group">
+                            <label for="a-contact">연락처 <span class="required">*</span></label>
+                            <input type="text" id="a-contact" name="contact" required placeholder="010-0000-0000 또는 kakao ID">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="a-note">메모 (선택)</label>
+                        <textarea id="a-note" name="note" rows="2" placeholder="늦을 수 있어요, 처음 참여합니다 등"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary form-submit">참여 신청 완료 →</button>
+                    <div class="form-status" id="attend-status"></div>
+                </form>
+            </div>
+
             <!-- Timeline -->
             <div class="timeline reveal">
                 <div class="timeline-item">
@@ -394,50 +419,6 @@
         </div>
     </section>
 
-    <!-- 모임 참여 (Event Attendance) -->
-    <section id="attend" class="attend-section">
-        <div class="section-inner">
-            <div class="section-label reveal">// ATTEND</div>
-            <h2 class="section-title reveal">모임 참여 신청</h2>
-            <p class="section-desc reveal">다가오는 모임에 참여하세요. 멤버가 아니어도 참여 가능합니다.</p>
-
-            <form id="attend-form" class="site-form reveal">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="a-name">이름 <span class="required">*</span></label>
-                        <input type="text" id="a-name" name="name" required placeholder="홍길동">
-                    </div>
-                    <div class="form-group">
-                        <label for="a-contact">연락처 <span class="required">*</span></label>
-                        <input type="text" id="a-contact" name="contact" required placeholder="010-0000-0000 또는 kakao ID">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="a-event">참여할 모임 <span class="required">*</span></label>
-                    <select id="a-event" name="event" required>
-                        <option value="">모임을 선택해주세요</option>
-                        <option value="2025-02-06 1차 킥오프">2.6(금) 1차 모임 — 킥오프 (옐로펀치 성수메사)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="a-note">메모 (선택)</label>
-                    <textarea id="a-note" name="note" rows="2" placeholder="늦을 수 있어요, 처음 참여합니다 등"></textarea>
-                </div>
-                <button type="submit" class="btn-primary form-submit">모임 참여 신청 →</button>
-                <div class="form-status" id="attend-status"></div>
-            </form>
-
-            <div class="join-methods reveal" style="margin-top: 3rem;">
-                <a href="https://www.facebook.com/share/p/1C2Y49TPbn/" target="_blank" rel="noopener noreferrer" class="join-method">
-                    <div class="jm-icon">📋</div>
-                    <div>
-                        <div class="jm-label">원문 보기</div>
-                        <div class="jm-value">Facebook 포스트 →</div>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </section>
 
     <!-- Footer -->
     <footer>

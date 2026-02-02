@@ -113,3 +113,21 @@ if (membershipForm) {
 if (attendForm) {
     handleFormSubmit(attendForm, document.getElementById('attend-status'), 'attend');
 }
+
+// ========== Attend toggle (show form under event) ==========
+document.querySelectorAll('.attend-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const form = btn.nextElementSibling;
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+            btn.textContent = '접기 ▲';
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-secondary');
+        } else {
+            form.style.display = 'none';
+            btn.textContent = '이 모임 참여 신청하기 →';
+            btn.classList.remove('btn-secondary');
+            btn.classList.add('btn-primary');
+        }
+    });
+});

@@ -3,7 +3,7 @@
  *
  * 사용법:
  * 1. Google Sheets에서 새 스프레드시트 생성
- * 2. 시트 2개 만들기: "멤버가입", "모임참가"
+ * 2. 시트 2개 만들기: "멤버가입", "모임참여"
  * 3. 확장 프로그램 → Apps Script 열기
  * 4. 이 코드를 붙여넣기
  * 5. 배포 → 새 배포 → 웹 앱 → 액세스: 모든 사용자 → 배포
@@ -33,10 +33,10 @@ function doPost(e) {
       ]);
 
     } else if (data.formType === 'attend') {
-      const sheet = ss.getSheetByName('모임참가') || ss.insertSheet('모임참가');
+      const sheet = ss.getSheetByName('모임참여') || ss.insertSheet('모임참여');
 
       if (sheet.getLastRow() === 0) {
-        sheet.appendRow(['제출일시', '이름', '연락처', '참가모임', '메모']);
+        sheet.appendRow(['제출일시', '이름', '연락처', '참여모임', '메모']);
       }
 
       sheet.appendRow([

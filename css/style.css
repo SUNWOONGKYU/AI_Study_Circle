@@ -470,6 +470,41 @@ section {
     color: var(--text-muted);
 }
 
+/* ========== ABOUT ORIGIN LINK ========== */
+.about-origin-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    color: var(--accent-cyan);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: opacity 0.3s ease;
+}
+
+.about-origin-link:hover {
+    text-decoration: underline;
+    opacity: 0.85;
+}
+
+/* ========== ATTEND INLINE (under schedule card) ========== */
+.attend-inline {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.attend-toggle {
+    font-size: 1.05rem;
+    padding: 1rem 2.5rem;
+}
+
+.attend-form-inline {
+    margin-top: 1.5rem;
+    text-align: left;
+    animation: fadeInUp 0.4s ease forwards;
+}
+
 /* ========== ACTIVITIES ========== */
 .activities-section {
     background: var(--bg-secondary);
