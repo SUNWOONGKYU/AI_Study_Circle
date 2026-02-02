@@ -433,51 +433,88 @@
                 </form>
             </div>
 
-            <!-- 로그인 상태: 프로필 보기/수정 -->
+            <!-- 로그인 상태: 프로필 현황 -->
             <div id="profile-container" style="display:none;">
-                <form id="profile-form" class="site-form">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="p-name">이름 <span class="required">*</span></label>
-                            <input type="text" id="p-name" name="name" required>
+                <!-- 프로필 현황 (읽기전용) -->
+                <div id="profile-view">
+                    <div class="profile-info-grid">
+                        <div class="profile-info-item">
+                            <span class="profile-label">이름</span>
+                            <span class="profile-value" id="pv-name">-</span>
+                        </div>
+                        <div class="profile-info-item">
+                            <span class="profile-label">전화번호</span>
+                            <span class="profile-value" id="pv-phone">-</span>
+                        </div>
+                        <div class="profile-info-item">
+                            <span class="profile-label">이메일</span>
+                            <span class="profile-value" id="pv-email">-</span>
+                        </div>
+                        <div class="profile-info-item">
+                            <span class="profile-label">멤버 유형</span>
+                            <span class="profile-value" id="pv-type">-</span>
+                        </div>
+                        <div class="profile-info-item profile-info-full">
+                            <span class="profile-label">관심 분야</span>
+                            <span class="profile-value" id="pv-interests">-</span>
+                        </div>
+                        <div class="profile-info-item profile-info-full">
+                            <span class="profile-label">한마디</span>
+                            <span class="profile-value" id="pv-message">-</span>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-primary" id="profile-edit-btn" style="margin-top:1.5rem;">프로필 수정하기 →</button>
+                </div>
+
+                <!-- 프로필 수정 (숨김) -->
+                <div id="profile-edit" style="display:none;">
+                    <form id="profile-form" class="site-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="p-name">이름 <span class="required">*</span></label>
+                                <input type="text" id="p-name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="p-contact">전화번호 <span class="required">*</span></label>
+                                <input type="text" id="p-contact" name="contact" required>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label for="p-contact">전화번호 <span class="required">*</span></label>
-                            <input type="text" id="p-contact" name="contact" required>
+                            <label>관심 분야 (복수 선택 가능)</label>
+                            <div class="checkbox-grid" id="profile-interests">
+                                <label class="checkbox-item"><input type="checkbox" name="interests" value="바이브코딩"> 바이브코딩/개발</label>
+                                <label class="checkbox-item"><input type="checkbox" name="interests" value="서비스기획"> 앱/웹 서비스 기획</label>
+                                <label class="checkbox-item"><input type="checkbox" name="interests" value="AI툴활용"> AI 툴 활용</label>
+                                <label class="checkbox-item"><input type="checkbox" name="interests" value="콘텐츠제작"> 콘텐츠 제작</label>
+                                <label class="checkbox-item"><input type="checkbox" name="interests" value="사업기획"> 사업 아이디어 기획</label>
+                                <label class="checkbox-item"><input type="checkbox" name="interests" value="테크트렌드"> Tech Trend</label>
+                                <label class="checkbox-item"><input type="checkbox" name="interests" value="경제투자"> 경제전망/투자</label>
+                                <label class="checkbox-item"><input type="checkbox" name="interests" value="마케팅"> AI 마케팅</label>
+                                <label class="checkbox-item"><input type="checkbox" name="interests" value="네트워킹"> 네트워킹</label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label>관심 분야 (복수 선택 가능)</label>
-                        <div class="checkbox-grid" id="profile-interests">
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="바이브코딩"> 바이브코딩/개발</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="서비스기획"> 앱/웹 서비스 기획</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="AI툴활용"> AI 툴 활용</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="콘텐츠제작"> 콘텐츠 제작</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="사업기획"> 사업 아이디어 기획</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="테크트렌드"> Tech Trend</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="경제투자"> 경제전망/투자</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="마케팅"> AI 마케팅</label>
-                            <label class="checkbox-item"><input type="checkbox" name="interests" value="네트워킹"> 네트워킹</label>
+                        <div class="form-group">
+                            <label for="p-type">멤버 유형</label>
+                            <select id="p-type" name="memberType">
+                                <option value="">선택해주세요</option>
+                                <option value="메이커">메이커 — 당장 만들고 부딪히고 싶다</option>
+                                <option value="러너">러너 — 배우면서 천천히 참여하고 싶다</option>
+                                <option value="옵저버">옵저버 — 분위기와 흐름을 보고 싶다</option>
+                                <option value="컨트리뷰터">컨트리뷰터 — AI 지식을 공유하고 기여하고 싶다</option>
+                                <option value="쇼케이서">쇼케이서 — 개발한 서비스를 소개하고 싶다</option>
+                            </select>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="p-type">멤버 유형</label>
-                        <select id="p-type" name="memberType">
-                            <option value="">선택해주세요</option>
-                            <option value="메이커">🔥 메이커 — 당장 만들고 부딪히고 싶다</option>
-                            <option value="러너">📚 러너 — 배우면서 천천히 참여하고 싶다</option>
-                            <option value="옵저버">👀 옵저버 — 분위기와 흐름을 보고 싶다</option>
-                            <option value="컨트리뷰터">🎤 컨트리뷰터 — AI 지식을 공유하고 기여하고 싶다</option>
-                            <option value="쇼케이서">🚀 쇼케이서 — 개발한 서비스를 소개하고 싶다</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="p-message">한마디 (선택)</label>
-                        <textarea id="p-message" name="message" rows="3"></textarea>
-                    </div>
-                    <button type="submit" class="btn-primary form-submit">프로필 저장 →</button>
-                    <div class="form-status" id="profile-status"></div>
-                </form>
+                        <div class="form-group">
+                            <label for="p-message">한마디 (선택)</label>
+                            <textarea id="p-message" name="message" rows="3"></textarea>
+                        </div>
+                        <div style="display:flex; gap:1rem; align-items:center;">
+                            <button type="submit" class="btn-primary form-submit">프로필 저장 →</button>
+                            <button type="button" class="btn-secondary" id="profile-cancel-btn">취소</button>
+                        </div>
+                        <div class="form-status" id="profile-status"></div>
+                    </form>
+                </div>
 
                 <!-- 비밀번호 변경 -->
                 <div class="password-change-section" style="margin-top:2.5rem; padding-top:2rem; border-top:1px solid rgba(255,255,255,0.08);">
