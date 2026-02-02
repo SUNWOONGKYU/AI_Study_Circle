@@ -493,17 +493,25 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
     btn.disabled = true;
 
     try {
-        await Auth.signUp(email, password, { name, phone });
+        const signUpData = await Auth.signUp(email, password, { name, phone });
 
         // 트리거가 profiles row를 생성할 시간 확보
-        await new Promise(r => setTimeout(r, 1000));
+        await new Promise(r => setTimeout(r, 2000));
 
-        const session = await Auth.getSession();
-        if (session) {
-            // 프로필 업데이트 (최대 3회 재시도)
-            for (let i = 0; i < 3; i++) {
+        // signUp 반환값 또는 세션에서 유저 ID 가져오기
+        let userId = null;
+        if (signUpData && signUpData.user) {
+            userId = signUpData.user.id;
+        } else {
+            const session = await Auth.getSession();
+            if (session && session.user) userId = session.user.id;
+        }
+
+        if (userId) {
+            // 프로필 업데이트 (최대 5회 재시도)
+            for (let i = 0; i < 5; i++) {
                 try {
-                    await DB.updateProfile(session.user.id, {
+                    await DB.updateProfile(userId, {
                         name,
                         phone,
                         interests,
@@ -512,7 +520,8 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
                     });
                     break;
                 } catch (retryErr) {
-                    if (i < 2) await new Promise(r => setTimeout(r, 1000));
+                    console.warn('Profile update retry', i + 1, retryErr.message);
+                    await new Promise(r => setTimeout(r, 1500));
                 }
             }
         }
