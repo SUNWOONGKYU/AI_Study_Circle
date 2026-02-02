@@ -453,23 +453,26 @@ async function loadFirstEvent() {
 
 async function checkAttendance() {
     if (!currentUser || !currentEventId) return;
+    const toggleBtn = document.getElementById('attend-toggle-btn');
+    const attendForm = document.getElementById('attend-form');
+    const attendAlready = document.getElementById('attend-already');
+
+    // 기본: 신청 가능 상태로 초기화
+    if (toggleBtn) toggleBtn.style.display = '';
+    if (attendForm) attendForm.style.display = 'none';
+    if (attendAlready) attendAlready.style.display = 'none';
+
     try {
         const attendance = await DB.getMyAttendance(currentUser.id);
-        const existing = attendance.find(a => a.event_id === currentEventId);
-        const toggleBtn = document.getElementById('attend-toggle-btn');
-        const attendForm = document.getElementById('attend-form');
-        const attendAlready = document.getElementById('attend-already');
+        const existing = attendance.find(a => a.event_id == currentEventId);
 
         if (existing) {
-            toggleBtn.style.display = 'none';
-            attendForm.style.display = 'none';
-            attendAlready.style.display = 'block';
-        } else {
-            toggleBtn.style.display = '';
-            attendAlready.style.display = 'none';
+            if (toggleBtn) toggleBtn.style.display = 'none';
+            if (attendForm) attendForm.style.display = 'none';
+            if (attendAlready) attendAlready.style.display = 'block';
         }
     } catch (e) {
-        // 무시
+        console.error('checkAttendance error:', e);
     }
 }
 
