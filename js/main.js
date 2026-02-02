@@ -121,9 +121,6 @@ function updateUI() {
     const authContainer = document.getElementById('auth-container');
     const profileContainer = document.getElementById('profile-container');
     const membershipTitle = document.getElementById('membership-title');
-    const attendLoggedIn = document.getElementById('attend-logged-in');
-    const attendLoginPrompt = document.getElementById('attend-login-prompt');
-    const attendGuestBtn = document.getElementById('attend-guest-btn');
 
     if (currentUser && currentProfile) {
         // 로그인 상태
@@ -133,11 +130,7 @@ function updateUI() {
         navUserName.textContent = currentProfile.name || currentUser.email;
 
         // 관리자 링크
-        if (currentProfile.role === 'admin') {
-            navAdminLink.style.display = 'block';
-        } else {
-            navAdminLink.style.display = 'none';
-        }
+        navAdminLink.style.display = currentProfile.role === 'admin' ? 'block' : 'none';
 
         // 멤버십 섹션 → 프로필 모드
         authContainer.style.display = 'none';
@@ -146,17 +139,6 @@ function updateUI() {
 
         // 프로필 폼 채우기
         fillProfileForm();
-
-        // 참여 신청
-        attendLoggedIn.style.display = 'block';
-        attendLoginPrompt.style.display = 'none';
-        if (attendGuestBtn) attendGuestBtn.style.display = 'none';
-
-        // 참여 폼에 이름/전화 자동입력
-        const aName = document.getElementById('a-name');
-        const aContact = document.getElementById('a-contact');
-        if (aName) aName.value = currentProfile.name || '';
-        if (aContact) aContact.value = currentProfile.phone || '';
     } else {
         // 비로그인 상태
         navLoginLink.style.display = 'block';
@@ -166,11 +148,10 @@ function updateUI() {
 
         authContainer.style.display = 'block';
         profileContainer.style.display = 'none';
-
-        attendLoggedIn.style.display = 'none';
-        attendLoginPrompt.style.display = 'none';
-        if (attendGuestBtn) attendGuestBtn.style.display = '';
     }
+
+    // 동적 참여 버튼 UI 업데이트
+    updateAttendUI();
 }
 
 function fillProfileForm() {
@@ -188,22 +169,196 @@ function fillProfileForm() {
     });
 }
 
-// ========== Load first active event ==========
-async function loadFirstEvent() {
+// ========== Helper: escape HTML ==========
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+}
+
+// ========== Helper: format event date ==========
+function formatEventDate(dateStr) {
+    const date = new Date(dateStr + 'T00:00:00');
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+    const dayName = dayNames[date.getDay()];
+    return { display: `${month}.${day}`, dayName };
+}
+
+// ========== Helper: format event time ==========
+function formatEventTime(timeStr) {
+    if (!timeStr) return '';
+    const [h, m] = timeStr.split(':');
+    const hour = parseInt(h);
+    const period = hour < 12 ? '오전' : '저녁';
+    const displayHour = hour > 12 ? hour - 12 : hour;
+    return `${period} ${displayHour}:${m} ${hour >= 12 ? 'PM' : 'AM'}`;
+}
+
+// ========== Render events from DB ==========
+async function renderScheduleEvents() {
+    const container = document.getElementById('events-container');
     try {
         const events = await DB.getEvents();
-        if (events.length > 0) {
-            currentEventId = events[0].id;
-            document.getElementById('attend-event-id').value = currentEventId;
 
-            // 이미 참여했는지 확인
-            if (currentUser) {
-                checkAttendance();
-            }
+        if (events.length === 0) {
+            container.innerHTML = '<div class="admin-empty" style="text-align:center; padding:3rem 1rem; color:var(--text-muted);">예정된 모임이 없습니다.</div>';
+            return;
         }
+
+        // 첫 번째 활성 이벤트를 참여 신청용으로 설정
+        currentEventId = events[0].id;
+        document.getElementById('attend-event-id').value = currentEventId;
+
+        container.innerHTML = events.map((ev, idx) => {
+            const { display, dayName } = formatEventDate(ev.event_date);
+            const timeDisplay = formatEventTime(ev.event_time);
+            const isFirst = idx === 0;
+
+            // 상세 정보 항목들
+            let detailItems = '';
+            if (ev.location) {
+                detailItems += `
+                    <div class="schedule-info-item">
+                        <div class="schedule-info-icon">📍</div>
+                        <div class="schedule-info-text">
+                            <div class="info-label">장소</div>
+                            <div class="info-value">${escapeHtml(ev.location)}</div>
+                        </div>
+                    </div>`;
+            }
+            if (ev.address) {
+                detailItems += `
+                    <div class="schedule-info-item">
+                        <div class="schedule-info-icon">🗺️</div>
+                        <div class="schedule-info-text">
+                            <div class="info-label">주소</div>
+                            <div class="info-value">${escapeHtml(ev.address)}</div>
+                        </div>
+                    </div>`;
+            }
+            if (ev.map_url) {
+                detailItems += `
+                    <div class="schedule-info-item">
+                        <div class="schedule-info-icon">🔗</div>
+                        <div class="schedule-info-text">
+                            <div class="info-label">네이버 지도</div>
+                            <div class="info-value"><a href="${escapeHtml(ev.map_url)}" target="_blank" rel="noopener noreferrer">지도에서 보기 →</a></div>
+                        </div>
+                    </div>`;
+            }
+            if (ev.provision) {
+                detailItems += `
+                    <div class="schedule-info-item">
+                        <div class="schedule-info-icon">🥪</div>
+                        <div class="schedule-info-text">
+                            <div class="info-label">제공</div>
+                            <div class="info-value">${escapeHtml(ev.provision)}</div>
+                        </div>
+                    </div>`;
+            }
+
+            // 참여 신청 버튼 (첫 번째 이벤트에만)
+            const attendBtn = isFirst ? `
+                <div class="attend-btn-wrap" id="attend-section">
+                    <button type="button" class="btn-primary" id="attend-guest-btn" data-open-modal="login">이 모임 참여 신청하기 →</button>
+                    <div id="attend-logged-in" style="display:none;">
+                        <button type="button" class="btn-primary attend-toggle" id="attend-toggle-btn">이 모임 참여 신청하기 →</button>
+                    </div>
+                </div>` : '';
+
+            return `
+                <div class="schedule-card reveal">
+                    <div class="schedule-highlight">
+                        <div class="schedule-date-label">✨ ${escapeHtml(ev.title)}</div>
+                        <div class="schedule-date">
+                            <span class="month">${display}</span> ${dayName}
+                        </div>
+                        ${timeDisplay ? `<div class="schedule-time">${timeDisplay}</div>` : ''}
+                        ${attendBtn}
+                    </div>
+                    ${detailItems ? `
+                    <div class="schedule-details">
+                        <h3>${escapeHtml(ev.title)} 상세 정보</h3>
+                        <div class="schedule-info">
+                            ${detailItems}
+                        </div>
+                    </div>` : ''}
+                </div>`;
+        }).join('');
+
+        // 동적으로 생성된 버튼에 이벤트 리스너 재연결
+        rebindAttendButtons();
+
+        // 로그인 상태에 따라 참여 버튼 UI 업데이트
+        updateAttendUI();
+
+        // 이미 참여했는지 확인
+        if (currentUser) {
+            checkAttendance();
+        }
+
     } catch (e) {
-        // 이벤트 로드 실패 시 하드코딩된 UI 유지
+        container.innerHTML = '<div class="admin-empty" style="text-align:center; padding:3rem 1rem; color:var(--text-muted);">모임 정보를 불러올 수 없습니다.</div>';
     }
+}
+
+// ========== Rebind attend buttons after dynamic render ==========
+function rebindAttendButtons() {
+    // data-open-modal 버튼 재연결
+    const guestBtn = document.getElementById('attend-guest-btn');
+    if (guestBtn) {
+        guestBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            openModal('login', { showNotice: true });
+        });
+    }
+
+    // attend-toggle-btn 재연결
+    const toggleBtn = document.getElementById('attend-toggle-btn');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            const form = document.getElementById('attend-form');
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+                toggleBtn.textContent = '접기 ▲';
+                toggleBtn.classList.remove('btn-primary');
+                toggleBtn.classList.add('btn-secondary');
+            } else {
+                form.style.display = 'none';
+                toggleBtn.textContent = '이 모임 참여 신청하기 →';
+                toggleBtn.classList.remove('btn-secondary');
+                toggleBtn.classList.add('btn-primary');
+            }
+        });
+    }
+}
+
+// ========== Update attend button visibility based on login state ==========
+function updateAttendUI() {
+    const attendLoggedIn = document.getElementById('attend-logged-in');
+    const attendGuestBtn = document.getElementById('attend-guest-btn');
+
+    if (!attendLoggedIn && !attendGuestBtn) return;
+
+    if (currentUser && currentProfile) {
+        if (attendLoggedIn) attendLoggedIn.style.display = 'block';
+        if (attendGuestBtn) attendGuestBtn.style.display = 'none';
+        // 참여 폼에 이름/전화 자동입력
+        const aName = document.getElementById('a-name');
+        const aContact = document.getElementById('a-contact');
+        if (aName) aName.value = currentProfile.name || '';
+        if (aContact) aContact.value = currentProfile.phone || '';
+    } else {
+        if (attendLoggedIn) attendLoggedIn.style.display = 'none';
+        if (attendGuestBtn) attendGuestBtn.style.display = '';
+    }
+}
+
+// ========== Load first active event (legacy wrapper) ==========
+async function loadFirstEvent() {
+    await renderScheduleEvents();
 }
 
 async function checkAttendance() {
@@ -354,24 +509,7 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
     }
 });
 
-// ========== Attend Toggle ==========
-const attendToggleBtn = document.getElementById('attend-toggle-btn');
-if (attendToggleBtn) {
-    attendToggleBtn.addEventListener('click', () => {
-        const form = document.getElementById('attend-form');
-        if (form.style.display === 'none') {
-            form.style.display = 'block';
-            attendToggleBtn.textContent = '접기 ▲';
-            attendToggleBtn.classList.remove('btn-primary');
-            attendToggleBtn.classList.add('btn-secondary');
-        } else {
-            form.style.display = 'none';
-            attendToggleBtn.textContent = '이 모임 참여 신청하기 →';
-            attendToggleBtn.classList.remove('btn-secondary');
-            attendToggleBtn.classList.add('btn-primary');
-        }
-    });
-}
+// ========== Attend Toggle (handled dynamically in rebindAttendButtons) ==========
 
 // ========== Attend Submit ==========
 const attendForm = document.getElementById('attend-form');

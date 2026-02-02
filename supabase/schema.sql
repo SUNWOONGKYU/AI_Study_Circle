@@ -43,7 +43,7 @@ CREATE TABLE attendance (
 
 -- 4. 첫 이벤트 시드 데이터
 INSERT INTO events (title, event_date, event_time, location, address, map_url, provision, description)
-VALUES ('1차 킥오프', '2025-02-06', '19:00', '옐로펀치 성수메사', '성수일로 8길 5 A동 607호', 'https://naver.me/5duYsK0I', '간단한 샌드위치 & 음료', '서로 안면 트기, 방향 설정, 첫 활동');
+VALUES ('1차 킥오프', '2025-02-06', '19:00', '옐로펀치 성수메사', '서울특별시 성동구 성수일로 8길 5 A동 607호', 'https://naver.me/5duYsK0I', '간단한 샌드위치 & 음료', '서로 안면 트기, 방향 설정, 첫 활동');
 
 -- 5. 회원가입 시 프로필 자동 생성 트리거
 CREATE OR REPLACE FUNCTION handle_new_user()
@@ -133,6 +133,56 @@ CREATE POLICY "Admins can update events"
 
 CREATE POLICY "Admins can view all attendance"
   ON attendance FOR SELECT
+  USING (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  );
+
+-- 10. 모임 장소 테이블
+CREATE TABLE locations (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  address TEXT DEFAULT '',
+  map_url TEXT DEFAULT '',
+  note TEXT DEFAULT '',
+  loc_type TEXT DEFAULT 'primary',
+  is_active BOOLEAN DEFAULT true,
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 장소 시드 데이터
+INSERT INTO locations (name, address, map_url, note, loc_type, sort_order)
+VALUES
+  ('옐로펀치 성수메사', '서울특별시 성동구 성수일로 8길 5 A동 607호 (성수동2가 248-55)', 'https://naver.me/5duYsK0I', 'AI 연구, 바이브코딩, 서비스 개발/창업 모임, 네트워킹에 딱 맞는 공간', 'primary', 1),
+  ('고척동 공간', '아담하고 포근한 공간 (주 1회 활용 가능)', '', '기타: 강남역 부근 / 양재역 부근 공유오피스 (파이브스팟, 토즈 등) 활용 가능. 무상 제공 장소가 있으면 적극 활용', 'secondary', 2);
+
+-- 장소 RLS
+ALTER TABLE locations ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Anyone can view active locations"
+  ON locations FOR SELECT
+  USING (is_active = true);
+
+CREATE POLICY "Admins can view all locations"
+  ON locations FOR SELECT
+  USING (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  );
+
+CREATE POLICY "Admins can insert locations"
+  ON locations FOR INSERT
+  WITH CHECK (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  );
+
+CREATE POLICY "Admins can update locations"
+  ON locations FOR UPDATE
+  USING (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  );
+
+CREATE POLICY "Admins can delete locations"
+  ON locations FOR DELETE
   USING (
     EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
   );

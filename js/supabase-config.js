@@ -164,6 +164,55 @@ const DB = {
         return data;
     },
 
+    // -- Locations --
+    async getLocations() {
+        const { data, error } = await supabase
+            .from('locations')
+            .select('*')
+            .eq('is_active', true)
+            .order('sort_order', { ascending: true });
+        if (error) throw error;
+        return data;
+    },
+
+    async getAllLocations() {
+        const { data, error } = await supabase
+            .from('locations')
+            .select('*')
+            .order('sort_order', { ascending: true });
+        if (error) throw error;
+        return data;
+    },
+
+    async createLocation(loc) {
+        const { data, error } = await supabase
+            .from('locations')
+            .insert(loc)
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
+    },
+
+    async updateLocation(id, updates) {
+        const { data, error } = await supabase
+            .from('locations')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
+    },
+
+    async deleteLocation(id) {
+        const { error } = await supabase
+            .from('locations')
+            .delete()
+            .eq('id', id);
+        if (error) throw error;
+    },
+
     // -- Admin: Attendance by event --
     async getEventAttendees(eventId) {
         const { data, error } = await supabase
