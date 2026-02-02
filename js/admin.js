@@ -288,7 +288,8 @@ async function viewAttendees(eventId, eventTitle) {
             countEl.textContent = `총 ${attendees.length}명`;
         }
     } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="4" class="admin-empty">참여자 목록을 불러올 수 없습니다.</td></tr>';
+        console.error('viewAttendees error:', e);
+        tbody.innerHTML = '<tr><td colspan="4" class="admin-empty">참여자 목록을 불러올 수 없습니다: ' + (e.message || e) + '</td></tr>';
     }
 
     card.scrollIntoView({ behavior: 'smooth', block: 'center' });

@@ -160,49 +160,51 @@
                     </form>
                 </div>
 
-                <!-- 모임 목록 -->
-                <div class="admin-card">
-                    <h3>모임 목록</h3>
-                    <div class="admin-table-wrap">
-                        <table class="admin-table" id="events-table">
-                            <thead>
-                                <tr>
-                                    <th>제목</th>
-                                    <th>날짜</th>
-                                    <th>시간</th>
-                                    <th>장소</th>
-                                    <th>상태</th>
-                                    <th>참여자</th>
-                                    <th>관리</th>
-                                </tr>
-                            </thead>
-                            <tbody id="events-tbody">
-                                <tr><td colspan="7" class="admin-loading">로딩 중...</td></tr>
-                            </tbody>
-                        </table>
+                <!-- 모임 목록 + 참여자 명단 -->
+                <div>
+                    <div class="admin-card">
+                        <h3>모임 목록</h3>
+                        <div class="admin-table-wrap">
+                            <table class="admin-table" id="events-table">
+                                <thead>
+                                    <tr>
+                                        <th>제목</th>
+                                        <th>날짜</th>
+                                        <th>시간</th>
+                                        <th>장소</th>
+                                        <th>상태</th>
+                                        <th>참여자</th>
+                                        <th>관리</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="events-tbody">
+                                    <tr><td colspan="7" class="admin-loading">로딩 중...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 참여자 명단 (동적) -->
+                    <div class="admin-card" id="attendees-card" style="display:none;">
+                        <h3 id="attendees-title">참여자 명단</h3>
+                        <div class="admin-table-wrap">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>이름</th>
+                                        <th>전화번호</th>
+                                        <th>메모</th>
+                                        <th>신청일</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="attendees-tbody"></tbody>
+                            </table>
+                        </div>
+                        <p id="attendees-count" style="margin-top:1rem; color:var(--text-muted); font-size:0.85rem;"></p>
                     </div>
                 </div>
 
                 </div><!-- /admin-horizontal -->
-
-                <!-- 참여자 명단 (동적) -->
-                <div class="admin-card" id="attendees-card" style="display:none;">
-                    <h3 id="attendees-title">참여자 명단</h3>
-                    <div class="admin-table-wrap">
-                        <table class="admin-table">
-                            <thead>
-                                <tr>
-                                    <th>이름</th>
-                                    <th>전화번호</th>
-                                    <th>메모</th>
-                                    <th>신청일</th>
-                                </tr>
-                            </thead>
-                            <tbody id="attendees-tbody"></tbody>
-                        </table>
-                    </div>
-                    <p id="attendees-count" style="margin-top:1rem; color:var(--text-muted); font-size:0.85rem;"></p>
-                </div>
             </div>
             <!-- 장소 관리 -->
             <div id="panel-locations" class="admin-panel">
@@ -333,7 +335,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js?v=20260203a"></script>
-    <script src="js/admin.js?v=20260203a"></script>
+    <script src="js/supabase-config.js?v=20260203b"></script>
+    <script src="js/admin.js?v=20260203b"></script>
 </body>
 </html>
