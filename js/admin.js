@@ -174,6 +174,9 @@ eventForm.addEventListener('submit', async (e) => {
         event_date: document.getElementById('ev-date').value,
         event_time: document.getElementById('ev-time').value || null,
         location: document.getElementById('ev-location').value.trim(),
+        address: document.getElementById('ev-address').value.trim(),
+        map_url: document.getElementById('ev-map-url').value.trim(),
+        provision: document.getElementById('ev-provision').value.trim(),
         description: document.getElementById('ev-desc').value.trim()
     };
 
@@ -209,6 +212,9 @@ function editEvent(id) {
     document.getElementById('ev-date').value = ev.event_date;
     document.getElementById('ev-time').value = ev.event_time ? ev.event_time.slice(0, 5) : '';
     document.getElementById('ev-location').value = ev.location || '';
+    document.getElementById('ev-address').value = ev.address || '';
+    document.getElementById('ev-map-url').value = ev.map_url || '';
+    document.getElementById('ev-provision').value = ev.provision || '';
     document.getElementById('ev-desc').value = ev.description || '';
     document.getElementById('event-form-title').textContent = '모임 수정';
     eventForm.querySelector('.form-submit').textContent = '모임 수정 →';

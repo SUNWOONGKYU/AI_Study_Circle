@@ -269,86 +269,37 @@
             <h2 class="section-title reveal">다가오는 모임</h2>
             <p class="section-desc reveal">첫 모임을 시작으로, 설 이후 주 1회 정기 모임으로 운영됩니다.</p>
 
-            <!-- 동적 이벤트 목록 -->
+            <!-- 동적 이벤트 목록 (DB에서 로드) -->
             <div id="events-container">
-                <div class="schedule-card reveal">
-                    <div class="schedule-highlight">
-                        <div class="schedule-date-label">✨ 1차 모임</div>
-                        <div class="schedule-date">
-                            <span class="month">2.6</span> FRI
-                        </div>
-                        <div class="schedule-time">저녁 7:00 PM</div>
-                        <!-- 참여 신청 버튼 -->
-                        <div class="attend-btn-wrap" id="attend-section">
-                            <button type="button" class="btn-primary" id="attend-guest-btn" data-open-modal="login">이 모임 참여 신청하기 →</button>
-                            <div id="attend-logged-in" style="display:none;">
-                                <button type="button" class="btn-primary attend-toggle" id="attend-toggle-btn">이 모임 참여 신청하기 →</button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="admin-loading">모임 정보를 불러오는 중...</div>
+            </div>
 
-                    <div class="schedule-details">
-                        <h3>1차 모임 상세 정보</h3>
-                        <div class="schedule-info">
-                            <div class="schedule-info-item">
-                                <div class="schedule-info-icon">📍</div>
-                                <div class="schedule-info-text">
-                                    <div class="info-label">장소</div>
-                                    <div class="info-value">옐로펀치 성수메사</div>
-                                </div>
-                            </div>
-                            <div class="schedule-info-item">
-                                <div class="schedule-info-icon">🗺️</div>
-                                <div class="schedule-info-text">
-                                    <div class="info-label">주소</div>
-                                    <div class="info-value">성수일로 8길 5 A동 607호</div>
-                                </div>
-                            </div>
-                            <div class="schedule-info-item">
-                                <div class="schedule-info-icon">🔗</div>
-                                <div class="schedule-info-text">
-                                    <div class="info-label">네이버 지도</div>
-                                    <div class="info-value"><a href="https://naver.me/5duYsK0I" target="_blank" rel="noopener noreferrer">지도에서 보기 →</a></div>
-                                </div>
-                            </div>
-                            <div class="schedule-info-item">
-                                <div class="schedule-info-icon">🥪</div>
-                                <div class="schedule-info-text">
-                                    <div class="info-label">제공</div>
-                                    <div class="info-value">간단한 샌드위치 & 음료</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 참여 폼 (카드 밖) -->
-                <div class="attend-inline reveal">
-                    <form id="attend-form" class="site-form attend-form-inline" style="display:none;">
-                        <input type="hidden" name="event_id" id="attend-event-id" value="">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="a-name">이름</label>
-                                <input type="text" id="a-name" name="name" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="a-contact">전화번호</label>
-                                <input type="text" id="a-contact" name="contact" readonly>
-                            </div>
+            <!-- 참여 폼 (동적 카드 아래에 표시) -->
+            <div class="attend-inline reveal" id="attend-inline-wrap">
+                <form id="attend-form" class="site-form attend-form-inline" style="display:none;">
+                    <input type="hidden" name="event_id" id="attend-event-id" value="">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="a-name">이름</label>
+                            <input type="text" id="a-name" name="name" readonly>
                         </div>
                         <div class="form-group">
-                            <label for="a-note">메모 (선택)</label>
-                            <textarea id="a-note" name="note" rows="2" placeholder="늦을 수 있어요, 처음 참여합니다 등"></textarea>
+                            <label for="a-contact">전화번호</label>
+                            <input type="text" id="a-contact" name="contact" readonly>
                         </div>
-                        <button type="submit" class="btn-primary form-submit">참여 신청 완료 →</button>
-                        <div class="form-status" id="attend-status"></div>
-                    </form>
-                    <div id="attend-already" style="display:none;" class="attend-already-msg">
-                        이미 이 모임에 참여 신청했습니다.
-                        <button type="button" class="btn-secondary btn-small" id="cancel-attend-btn">참여 취소</button>
                     </div>
-                    <div id="attend-login-prompt" style="display:none;"></div>
+                    <div class="form-group">
+                        <label for="a-note">메모 (선택)</label>
+                        <textarea id="a-note" name="note" rows="2" placeholder="늦을 수 있어요, 처음 참여합니다 등"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary form-submit">참여 신청 완료 →</button>
+                    <div class="form-status" id="attend-status"></div>
+                </form>
+                <div id="attend-already" style="display:none;" class="attend-already-msg">
+                    이미 이 모임에 참여 신청했습니다.
+                    <button type="button" class="btn-secondary btn-small" id="cancel-attend-btn">참여 취소</button>
                 </div>
+                <div id="attend-login-prompt" style="display:none;"></div>
             </div>
 
             <!-- Timeline -->
@@ -418,6 +369,7 @@
         <div class="modal-content">
             <button class="modal-close" id="modal-close-btn">&times;</button>
             <h2 class="modal-title" id="membership-title">멤버 가입</h2>
+            <div id="modal-notice" class="modal-notice" style="display:none;">모임 참여 신청을 위해 먼저 로그인해 주세요.</div>
 
             <!-- 비로그인: 가입 / 로그인 폼 -->
             <div id="auth-container">
@@ -550,7 +502,7 @@
             <div class="footer-logo">
                 <span class="ai">AI</span> Study Circle <span class="brand-num">110</span>
             </div>
-            <p class="footer-text">자율과 창의성 안에서 즐겁게 — 리앤컴퍼니 이미경</p>
+            <p class="footer-text">자율과 창의성 안에서 즐겁게 — 리앤컴퍼니 이미경 <a href="admin.html" class="footer-admin">어드민</a></p>
         </div>
     </footer>
 

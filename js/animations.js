@@ -214,7 +214,7 @@
                     trigger: section,
                     start: 'top 85%',
                     end: 'top 50%',
-                    toggleActions: 'play none none reverse'
+                    toggleActions: 'play none none none'
                 },
                 opacity: 0,
                 y: 60,
@@ -230,7 +230,7 @@
                 scrollTrigger: {
                     trigger: el,
                     start: 'top 85%',
-                    toggleActions: 'play none none reverse'
+                    toggleActions: 'play none none none'
                 },
                 opacity: 0,
                 y: 30,
@@ -246,7 +246,7 @@
                 scrollTrigger: {
                     trigger: grid,
                     start: 'top 80%',
-                    toggleActions: 'play none none reverse'
+                    toggleActions: 'play none none none'
                 },
                 opacity: 0,
                 y: 50,
@@ -264,7 +264,7 @@
                 scrollTrigger: {
                     trigger: grid,
                     start: 'top 80%',
-                    toggleActions: 'play none none reverse'
+                    toggleActions: 'play none none none'
                 },
                 opacity: 0,
                 y: 40,
@@ -281,7 +281,7 @@
                 scrollTrigger: {
                     trigger: card,
                     start: 'top 80%',
-                    toggleActions: 'play none none reverse'
+                    toggleActions: 'play none none none'
                 },
                 opacity: 0,
                 y: 50,
@@ -298,7 +298,7 @@
                 scrollTrigger: {
                     trigger: tl,
                     start: 'top 80%',
-                    toggleActions: 'play none none reverse'
+                    toggleActions: 'play none none none'
                 },
                 opacity: 0,
                 x: -30,
@@ -315,7 +315,7 @@
                 scrollTrigger: {
                     trigger: grid,
                     start: 'top 80%',
-                    toggleActions: 'play none none reverse'
+                    toggleActions: 'play none none none'
                 },
                 opacity: 0,
                 y: 40,
@@ -331,7 +331,7 @@
                 scrollTrigger: {
                     trigger: grid,
                     start: 'top 80%',
-                    toggleActions: 'play none none reverse'
+                    toggleActions: 'play none none none'
                 },
                 opacity: 0,
                 x: -40,
@@ -342,7 +342,7 @@
                 scrollTrigger: {
                     trigger: grid,
                     start: 'top 80%',
-                    toggleActions: 'play none none reverse'
+                    toggleActions: 'play none none none'
                 },
                 opacity: 0,
                 x: 40,
@@ -359,7 +359,7 @@
                 scrollTrigger: {
                     trigger: vals,
                     start: 'top 80%',
-                    toggleActions: 'play none none reverse'
+                    toggleActions: 'play none none none'
                 },
                 opacity: 0,
                 x: 30,
@@ -497,7 +497,7 @@
                 scrollTrigger: {
                     trigger: wave,
                     start: 'top 95%',
-                    toggleActions: 'play none none reverse'
+                    toggleActions: 'play none none none'
                 },
                 opacity: 0,
                 duration: 1,

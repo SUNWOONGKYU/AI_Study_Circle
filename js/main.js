@@ -14,9 +14,14 @@ document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
 const authModal = document.getElementById('auth-modal');
 const modalCloseBtn = document.getElementById('modal-close-btn');
 
-function openModal(tab) {
+function openModal(tab, options) {
     authModal.classList.add('open');
     document.body.style.overflow = 'hidden';
+
+    const notice = document.getElementById('modal-notice');
+    if (notice) {
+        notice.style.display = (options && options.showNotice) ? 'block' : 'none';
+    }
 
     if (!currentUser) {
         const isLogin = tab === 'login';
@@ -35,7 +40,10 @@ function closeModal() {
 document.querySelectorAll('[data-open-modal]').forEach(el => {
     el.addEventListener('click', (e) => {
         e.preventDefault();
-        openModal(el.getAttribute('data-open-modal') || 'signup');
+        const tab = el.getAttribute('data-open-modal') || 'signup';
+        // 참여 신청 버튼에서 열릴 때 안내문 표시
+        const isAttendBtn = el.id === 'attend-guest-btn';
+        openModal(tab, { showNotice: isAttendBtn });
     });
 });
 
@@ -58,6 +66,18 @@ function setStatus(el, message, type) {
     el.className = 'form-status ' + type;
 }
 
+// ========== Admin Role Sync ==========
+async function syncAdminRole(user, profile) {
+    if (!user || !profile) return profile;
+    const isAdminEmail = ADMIN_EMAILS.includes(user.email.toLowerCase());
+    if (isAdminEmail && profile.role !== 'admin') {
+        try {
+            profile = await DB.updateProfile(user.id, { role: 'admin' });
+        } catch (e) { /* ignore */ }
+    }
+    return profile;
+}
+
 // ========== Auth State Management ==========
 async function initAuth() {
     const session = await Auth.getSession();
@@ -65,6 +85,7 @@ async function initAuth() {
         currentUser = session.user;
         try {
             currentProfile = await DB.getProfile(currentUser.id);
+            currentProfile = await syncAdminRole(currentUser, currentProfile);
         } catch (e) {
             currentProfile = null;
         }
@@ -77,6 +98,7 @@ async function initAuth() {
             currentUser = session.user;
             try {
                 currentProfile = await DB.getProfile(currentUser.id);
+                currentProfile = await syncAdminRole(currentUser, currentProfile);
             } catch (e) {
                 currentProfile = null;
             }

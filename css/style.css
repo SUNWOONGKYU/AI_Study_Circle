@@ -1105,6 +1105,20 @@ footer {
     color: var(--text-muted);
 }
 
+.footer-admin {
+    margin-left: 1rem;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+}
+
+.footer-admin:hover {
+    opacity: 1;
+    color: var(--accent-cyan);
+}
+
 .footer-tags {
     margin-top: 1.5rem;
     display: flex;
@@ -1182,6 +1196,17 @@ footer {
     font-size: 1.8rem;
     font-weight: 800;
     margin-bottom: 0.5rem;
+}
+
+.modal-notice {
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 10px;
+    padding: 0.8rem 1.2rem;
+    margin-bottom: 1.2rem;
+    font-size: 0.95rem;
+    color: var(--accent-cyan);
+    font-weight: 500;
 }
 
 .modal-desc {

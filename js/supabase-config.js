@@ -5,6 +5,12 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// ========== Admin Emails ==========
+const ADMIN_EMAILS = [
+    'wksun999@gmail.com',
+    'lsonic.lee@gmail.com'
+];
+
 // ========== Auth Helpers ==========
 const Auth = {
     async signUp(email, password, metadata) {

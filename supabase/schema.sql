@@ -23,6 +23,9 @@ CREATE TABLE events (
   event_date DATE NOT NULL,
   event_time TIME,
   location TEXT DEFAULT '',
+  address TEXT DEFAULT '',
+  map_url TEXT DEFAULT '',
+  provision TEXT DEFAULT '',
   description TEXT DEFAULT '',
   is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT now()
@@ -39,8 +42,8 @@ CREATE TABLE attendance (
 );
 
 -- 4. 첫 이벤트 시드 데이터
-INSERT INTO events (title, event_date, event_time, location, description)
-VALUES ('1차 킥오프', '2025-02-06', '19:00', '옐로펀치 성수메사', '서로 안면 트기, 방향 설정, 첫 활동');
+INSERT INTO events (title, event_date, event_time, location, address, map_url, provision, description)
+VALUES ('1차 킥오프', '2025-02-06', '19:00', '옐로펀치 성수메사', '성수일로 8길 5 A동 607호', 'https://naver.me/5duYsK0I', '간단한 샌드위치 & 음료', '서로 안면 트기, 방향 설정, 첫 활동');
 
 -- 5. 회원가입 시 프로필 자동 생성 트리거
 CREATE OR REPLACE FUNCTION handle_new_user()
@@ -133,6 +136,13 @@ CREATE POLICY "Admins can view all attendance"
   USING (
     EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
   );
+
+-- =============================================
+-- 기존 DB 마이그레이션 (이미 테이블이 있는 경우):
+-- ALTER TABLE events ADD COLUMN IF NOT EXISTS address TEXT DEFAULT '';
+-- ALTER TABLE events ADD COLUMN IF NOT EXISTS map_url TEXT DEFAULT '';
+-- ALTER TABLE events ADD COLUMN IF NOT EXISTS provision TEXT DEFAULT '';
+-- =============================================
 
 -- =============================================
 -- 설정 완료 후 할 일:
