@@ -30,7 +30,7 @@
                 <li><a href="#activities">활동영역</a></li>
                 <li><a href="#schedule">모임일정</a></li>
                 <li><a href="#location">장소</a></li>
-                <li><a href="#inquiry">문의하기</a></li>
+                <li><a href="#" id="nav-inquiry-link">문의하기</a></li>
                 <!-- 비로그인 상태 -->
                 <li id="nav-login-link"><a href="#" class="nav-login-btn" data-open-modal="login">로그인</a></li>
                 <li id="nav-signup-link"><a href="#" class="nav-cta" data-open-modal="signup">멤버 가입</a></li>
@@ -324,43 +324,40 @@
         </div>
     </section>
 
-    <!-- 문의하기 섹션 -->
-    <section id="inquiry" class="inquiry-section">
-        <div class="section-inner">
-            <div class="section-label">// INQUIRY</div>
-            <h2 class="section-title">문의하기</h2>
-            <p class="section-desc">궁금한 점이나 제안사항을 보내주세요.</p>
-
-            <div class="inquiry-form-wrap">
-                <form id="inquiry-form" class="site-form">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="inq-name">이름 <span class="required">*</span></label>
-                            <input type="text" id="inq-name" name="name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="inq-phone">전화번호</label>
-                            <input type="text" id="inq-phone" name="phone" placeholder="010-0000-0000">
-                        </div>
+    <!-- 문의하기 모달 -->
+    <div id="inquiry-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" id="inquiry-close-btn">&times;</button>
+            <h2 class="modal-title">문의하기</h2>
+            <p style="color:var(--text-muted); margin-bottom:1.5rem;">궁금한 점이나 제안사항을 보내주세요.</p>
+            <form id="inquiry-form" class="site-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="inq-name">이름 <span class="required">*</span></label>
+                        <input type="text" id="inq-name" name="name" required>
                     </div>
                     <div class="form-group">
-                        <label for="inq-email">이메일</label>
-                        <input type="email" id="inq-email" name="email" placeholder="email@example.com">
+                        <label for="inq-phone">전화번호</label>
+                        <input type="text" id="inq-phone" name="phone" placeholder="010-0000-0000">
                     </div>
-                    <div class="form-group">
-                        <label for="inq-subject">제목 <span class="required">*</span></label>
-                        <input type="text" id="inq-subject" name="subject" required placeholder="문의 제목">
-                    </div>
-                    <div class="form-group">
-                        <label for="inq-message">내용 <span class="required">*</span></label>
-                        <textarea id="inq-message" name="message" rows="5" required placeholder="문의 내용을 입력해주세요"></textarea>
-                    </div>
-                    <button type="submit" class="btn-primary form-submit">문의 보내기 →</button>
-                    <div class="form-status" id="inquiry-status"></div>
-                </form>
-            </div>
+                </div>
+                <div class="form-group">
+                    <label for="inq-email">이메일</label>
+                    <input type="email" id="inq-email" name="email" placeholder="email@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="inq-subject">제목 <span class="required">*</span></label>
+                    <input type="text" id="inq-subject" name="subject" required placeholder="문의 제목">
+                </div>
+                <div class="form-group">
+                    <label for="inq-message">내용 <span class="required">*</span></label>
+                    <textarea id="inq-message" name="message" rows="5" required placeholder="문의 내용을 입력해주세요"></textarea>
+                </div>
+                <button type="submit" class="btn-primary form-submit">문의 보내기 →</button>
+                <div class="form-status" id="inquiry-status"></div>
+            </form>
         </div>
-    </section>
+    </div>
 
     <!-- 멤버 가입 / 로그인 / 프로필 모달 -->
     <div id="auth-modal" class="modal-overlay">
