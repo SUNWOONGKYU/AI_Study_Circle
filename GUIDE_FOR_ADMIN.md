@@ -49,13 +49,107 @@ git config --global user.name "본인이름"
 git config --global user.email "lsonic.lee@gmail.com"
 ```
 
-### 1-5. Visual Studio Code 설치 (권장)
+### 1-5. Visual Studio Code (VS Code) 설치
 
-코드를 편하게 수정하기 위한 무료 편집기입니다.
+코드를 편하게 수정하기 위한 **무료** 편집기입니다. 전세계 개발자들이 가장 많이 사용합니다.
+
+#### 설치하기
 
 1. https://code.visualstudio.com 에 접속
-2. **Download for Windows** 클릭하여 설치
-3. 설치 시 **"Add to PATH"** 체크 (기본 체크되어 있음)
+2. 파란색 **"Download for Windows"** 버튼 클릭
+3. 다운로드된 설치 파일 실행
+4. 설치 중 옵션 화면에서 아래 항목들을 **모두 체크**:
+   - "Add to PATH" (환경 변수에 추가)
+   - "Register Code as an editor for supported file types"
+   - "Add 'Open with Code' action to Windows Explorer file context menu"
+   - "Add 'Open with Code' action to Windows Explorer directory context menu"
+5. **Install** 클릭 → 완료
+
+#### VS Code 첫 실행 시 설정
+
+1. VS Code를 실행하면 **Welcome** 탭이 열립니다 (닫아도 됩니다)
+2. 한국어 설정:
+   - 좌측 맨 아래 **톱니바퀴 아이콘** 클릭 → **Extensions** (또는 **Ctrl + Shift + X**)
+   - 검색창에 `Korean` 입력
+   - **"Korean Language Pack for Visual Studio Code"** 찾아서 **Install** 클릭
+   - 우측 하단에 **"Restart"** 버튼이 뜨면 클릭 → VS Code가 한국어로 바뀜
+
+#### VS Code에서 프로젝트 폴더 열기
+
+1. VS Code 실행
+2. **파일(File)** → **폴더 열기(Open Folder)** 클릭
+3. 클론한 `AI_Study_Circle` 폴더 선택 → **폴더 선택** 클릭
+4. "이 폴더의 작성자를 신뢰하시겠습니까?" 물어보면 → **예, 작성자를 신뢰합니다** 클릭
+5. 왼쪽에 파일 목록이 나타납니다 — 여기서 파일을 클릭하면 열립니다
+
+#### VS Code 필수 단축키
+
+| 단축키 | 기능 | 설명 |
+|--------|------|------|
+| **Ctrl + S** | 저장 | 파일 수정 후 반드시 저장! |
+| **Ctrl + F** | 검색 | 현재 파일에서 텍스트 찾기 |
+| **Ctrl + H** | 바꾸기 | 텍스트 찾아서 다른 텍스트로 바꾸기 |
+| **Ctrl + Shift + F** | 전체 검색 | 모든 파일에서 텍스트 찾기 (매우 유용!) |
+| **Ctrl + Z** | 되돌리기 | 실수로 지웠을 때 원래대로 |
+| **Ctrl + Shift + Z** | 다시 실행 | 되돌리기를 취소 |
+| **Ctrl + /** | 주석 처리 | 선택한 줄을 주석(비활성화) 처리 |
+
+#### VS Code에서 터미널(Git Bash) 사용하기
+
+Git Bash를 따로 열 필요 없이 VS Code 안에서 바로 명령어를 실행할 수 있습니다.
+
+1. VS Code 상단 메뉴에서 **터미널(Terminal)** → **새 터미널(New Terminal)** 클릭
+   - 또는 단축키: **Ctrl + `** (숫자 1 왼쪽의 백틱 키)
+2. 화면 아래에 터미널 창이 열립니다
+3. 여기에 git 명령어를 바로 입력할 수 있습니다:
+
+```bash
+git pull
+git add .
+git commit -m "수정 내용"
+git push
+```
+
+> 터미널이 PowerShell로 열리면 Git Bash로 바꾸기:
+> 터미널 우측 상단의 **∨(아래 화살표)** 클릭 → **Git Bash** 선택
+
+#### VS Code에서 Git 시각적으로 사용하기 (명령어 없이!)
+
+명령어가 어렵다면 VS Code의 Git 기능을 사용할 수 있습니다:
+
+1. 왼쪽 사이드바에서 **세 번째 아이콘** (가지가 갈라지는 모양 = 소스 제어) 클릭
+2. 수정된 파일이 목록으로 표시됩니다
+3. 파일 옆의 **+** 버튼 클릭 → 스테이징 (= `git add`)
+4. 상단 입력창에 수정 내용 입력 (예: "문구 수정")
+5. **체크(✓) 버튼** 클릭 → 커밋 (= `git commit`)
+6. 아래쪽 상태바에서 **동기화** 또는 **↑ 화살표** 클릭 → 푸시 (= `git push`)
+
+이 방법을 사용하면 **명령어를 한 줄도 입력하지 않고** 수정 → 반영이 가능합니다!
+
+#### VS Code 유용한 확장(Extension) 추천
+
+왼쪽 사이드바 **확장(Extensions)** 아이콘 (네모 4개 모양) 클릭 후 검색하여 설치:
+
+| 확장 이름 | 설명 |
+|-----------|------|
+| **Korean Language Pack** | VS Code 한국어 지원 |
+| **Live Server** | 수정 결과를 브라우저에서 실시간으로 확인 (매우 유용!) |
+| **Prettier** | 코드를 보기 좋게 자동 정렬 |
+| **HTML CSS Support** | HTML/CSS 작성 시 자동완성 지원 |
+
+#### Live Server 사용법 (수정 결과 바로 확인)
+
+Live Server를 설치하면 push 하기 전에 **내 컴퓨터에서 먼저 확인**할 수 있습니다.
+
+1. Live Server 확장 설치 (위 표 참고)
+2. VS Code에서 `index.html` 파일을 엽니다
+3. 우측 하단의 **"Go Live"** 버튼 클릭
+4. 브라우저가 자동으로 열리며 사이트가 표시됩니다
+5. 코드를 수정하고 저장(Ctrl+S)하면 **브라우저가 자동으로 새로고침**됩니다
+6. 확인이 끝나면 우측 하단의 **"Port: 5500"** 클릭하여 서버 종료
+
+> Live Server는 내 컴퓨터에서만 보이는 미리보기입니다.
+> 다른 사람에게 보이려면 반드시 `git push`까지 해야 합니다.
 
 ---
 
