@@ -1162,9 +1162,9 @@ footer {
 
 .footer-since {
     font-family: 'Outfit', sans-serif;
-    font-size: 0.8rem;
+    font-size: 1.1rem;
     color: var(--text-muted);
-    opacity: 0.6;
+    opacity: 0.8;
     margin-top: 0.5rem;
     letter-spacing: 1px;
 }
