@@ -32,7 +32,7 @@
                 <li><a href="#location">장소</a></li>
                 <!-- 비로그인 상태 -->
                 <li id="nav-login-link"><a href="#" class="nav-login-btn" data-open-modal="login">로그인</a></li>
-                <li id="nav-signup-link"><a href="#" class="nav-cta" data-open-modal="signup">멤버 가입 →</a></li>
+                <li id="nav-signup-link"><a href="#" class="nav-cta" data-open-modal="signup">멤버 가입</a></li>
                 <!-- 로그인 상태 (숨김) -->
                 <li id="nav-user-menu" class="nav-user-menu" style="display:none;">
                     <button class="nav-user-btn" id="nav-user-btn">
@@ -90,13 +90,6 @@
         </div>
     </section>
 
-    <!-- Wave Divider -->
-    <div class="wave-divider">
-        <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0,30 C360,60 720,0 1080,30 C1260,45 1380,20 1440,30 L1440,60 L0,60 Z" fill="var(--bg-primary)"/>
-        </svg>
-    </div>
-
     <!-- About -->
     <section id="about">
         <div class="section-inner">
@@ -151,6 +144,13 @@
             </div>
         </div>
     </section>
+
+    <!-- Wave Divider -->
+    <div class="wave-divider">
+        <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,30 C240,0 480,60 720,30 C960,0 1200,50 1440,20 L1440,60 L0,60 Z" fill="var(--bg-secondary)"/>
+        </svg>
+    </div>
 
     <!-- Activities -->
     <section id="activities" class="activities-section">
@@ -255,6 +255,13 @@
         </div>
     </section>
 
+    <!-- Wave Divider -->
+    <div class="wave-divider">
+        <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,20 C180,50 360,10 720,40 C1080,70 1260,10 1440,30 L1440,60 L0,60 Z" fill="var(--bg-primary)"/>
+        </svg>
+    </div>
+
     <!-- Schedule -->
     <section id="schedule">
         <div class="section-inner">
@@ -266,12 +273,11 @@
             <div id="events-container">
                 <div class="schedule-card reveal">
                     <div class="schedule-highlight">
-                        <div class="schedule-date-label">FIRST MEETUP</div>
+                        <div class="schedule-date-label">✨ 1차 모임</div>
                         <div class="schedule-date">
                             <span class="month">2.6</span> FRI
                         </div>
                         <div class="schedule-time">저녁 7:00 PM</div>
-                        <span class="schedule-badge">✨ 1차 모임</span>
                         <!-- 참여 신청 버튼 -->
                         <div class="attend-btn-wrap" id="attend-section">
                             <button type="button" class="btn-primary" id="attend-guest-btn" data-open-modal="login">이 모임 참여 신청하기 →</button>
@@ -371,6 +377,13 @@
         </div>
     </section>
 
+    <!-- Wave Divider -->
+    <div class="wave-divider">
+        <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,40 C360,10 720,50 1080,20 C1260,5 1380,40 1440,30 L1440,60 L0,60 Z" fill="var(--bg-secondary)"/>
+        </svg>
+    </div>
+
     <!-- Location -->
     <section id="location" class="location-section">
         <div class="section-inner">
@@ -405,16 +418,10 @@
         <div class="modal-content">
             <button class="modal-close" id="modal-close-btn">&times;</button>
             <h2 class="modal-title" id="membership-title">멤버 가입</h2>
-            <p class="modal-desc" id="membership-desc">AI Study Circle <span class="brand-num">110</span>에 멤버로 합류하세요.</p>
 
-            <!-- 비로그인: 탭 UI (가입 / 로그인) -->
+            <!-- 비로그인: 가입 / 로그인 폼 -->
             <div id="auth-container">
-                <div class="auth-tabs">
-                    <button class="auth-tab active" data-tab="signup">가입</button>
-                    <button class="auth-tab" data-tab="login">로그인</button>
-                </div>
-
-                <!-- 가입 탭 -->
+                <!-- 가입 폼 -->
                 <form id="signup-form" class="site-form auth-form">
                     <div class="form-grid">
                         <div class="form-group">
@@ -470,7 +477,7 @@
                     <div class="form-status" id="signup-status"></div>
                 </form>
 
-                <!-- 로그인 탭 -->
+                <!-- 로그인 폼 -->
                 <form id="login-form" class="site-form auth-form" style="display:none;">
                     <div class="form-grid">
                         <div class="form-group">
@@ -548,7 +555,10 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
     <script src="js/supabase-config.js"></script>
+    <script src="js/animations.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

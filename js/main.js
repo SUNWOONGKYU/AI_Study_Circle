@@ -3,35 +3,7 @@ let currentUser = null;
 let currentProfile = null;
 let currentEventId = null; // 첫 번째 활성 이벤트 ID (참여 신청용)
 
-// ========== Scroll Reveal ==========
-const reveals = document.querySelectorAll('.reveal');
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-        }
-    });
-}, {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-});
-
-reveals.forEach(el => observer.observe(el));
-
-// ========== Stagger children animations ==========
-document.querySelectorAll('.activities-grid .activity-card, .member-types .member-type').forEach((el, i) => {
-    el.style.transitionDelay = `${i * 0.08}s`;
-});
-
-// ========== Nav background on scroll ==========
-window.addEventListener('scroll', () => {
-    const nav = document.querySelector('nav');
-    if (window.scrollY > 50) {
-        nav.style.background = 'var(--bg-nav-scroll)';
-    } else {
-        nav.style.background = 'var(--bg-nav)';
-    }
-});
+// ========== Scroll Reveal & Nav scroll are handled by js/animations.js (GSAP) ==========
 
 // ========== Mobile menu toggle ==========
 document.querySelector('.mobile-menu-btn').addEventListener('click', () => {
@@ -46,13 +18,11 @@ function openModal(tab) {
     authModal.classList.add('open');
     document.body.style.overflow = 'hidden';
 
-    // 탭 전환
-    if (tab && !currentUser) {
-        document.querySelectorAll('.auth-tab').forEach(t => {
-            t.classList.toggle('active', t.dataset.tab === tab);
-        });
-        document.getElementById('signup-form').style.display = tab === 'signup' ? 'block' : 'none';
-        document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+    if (!currentUser) {
+        const isLogin = tab === 'login';
+        document.getElementById('signup-form').style.display = isLogin ? 'none' : 'block';
+        document.getElementById('login-form').style.display = isLogin ? 'block' : 'none';
+        document.getElementById('membership-title').textContent = isLogin ? '로그인' : '멤버 가입';
     }
 }
 
@@ -129,7 +99,6 @@ function updateUI() {
     const authContainer = document.getElementById('auth-container');
     const profileContainer = document.getElementById('profile-container');
     const membershipTitle = document.getElementById('membership-title');
-    const membershipDesc = document.getElementById('membership-desc');
     const attendLoggedIn = document.getElementById('attend-logged-in');
     const attendLoginPrompt = document.getElementById('attend-login-prompt');
     const attendGuestBtn = document.getElementById('attend-guest-btn');
@@ -152,7 +121,6 @@ function updateUI() {
         authContainer.style.display = 'none';
         profileContainer.style.display = 'block';
         membershipTitle.textContent = '내 프로필';
-        membershipDesc.textContent = '프로필 정보를 확인하고 수정할 수 있습니다.';
 
         // 프로필 폼 채우기
         fillProfileForm();
@@ -176,8 +144,6 @@ function updateUI() {
 
         authContainer.style.display = 'block';
         profileContainer.style.display = 'none';
-        membershipTitle.textContent = '멤버 가입';
-        membershipDesc.textContent = 'AI Study Circle에 멤버로 합류하세요. 누구나 편하게 가입할 수 있습니다.';
 
         attendLoggedIn.style.display = 'none';
         attendLoginPrompt.style.display = 'none';
@@ -240,17 +206,7 @@ async function checkAttendance() {
     }
 }
 
-// ========== Auth Tabs ==========
-document.querySelectorAll('.auth-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-        document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-
-        const target = tab.dataset.tab;
-        document.getElementById('signup-form').style.display = target === 'signup' ? 'block' : 'none';
-        document.getElementById('login-form').style.display = target === 'login' ? 'block' : 'none';
-    });
-});
+// ========== Auth Tabs (removed — signup/login are separate views now) ==========
 
 // ========== Sign Up ==========
 document.getElementById('signup-form').addEventListener('submit', async (e) => {
