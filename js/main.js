@@ -491,11 +491,19 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
         e.target.reset();
         setTimeout(closeModal, 1500);
     } catch (err) {
+        console.error('Signup error:', err);
+        const errMsg = err.message || String(err);
         let msg = '가입 중 오류가 발생했습니다.';
-        if (err.message.includes('already registered')) {
-            msg = '이미 등록된 이메일입니다.';
-        } else if (err.message.includes('password')) {
+        if (errMsg.includes('already registered') || errMsg.includes('already been registered')) {
+            msg = '이미 등록된 이메일입니다. 로그인을 시도해주세요.';
+        } else if (errMsg.includes('password')) {
             msg = '비밀번호는 6자 이상이어야 합니다.';
+        } else if (errMsg.includes('email')) {
+            msg = '이메일 형식을 확인해주세요.';
+        } else if (errMsg.includes('rate') || errMsg.includes('limit')) {
+            msg = '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.';
+        } else {
+            msg = '가입 오류: ' + errMsg;
         }
         setStatus(statusEl, msg, 'error');
     } finally {
