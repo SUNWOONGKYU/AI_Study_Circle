@@ -130,15 +130,15 @@ function updateUI() {
     const profileContainer = document.getElementById('profile-container');
     const membershipTitle = document.getElementById('membership-title');
 
-    if (currentUser && currentProfile) {
+    if (currentUser) {
         // 로그인 상태
         navLoginLink.style.display = 'none';
         navSignupLink.style.display = 'none';
         navUserMenu.style.display = 'block';
-        navUserName.textContent = currentProfile.name || currentUser.email;
+        navUserName.textContent = (currentProfile && currentProfile.name) || currentUser.email;
 
         // 관리자 링크
-        navAdminLink.style.display = currentProfile.role === 'admin' ? 'block' : 'none';
+        navAdminLink.style.display = (currentProfile && currentProfile.role === 'admin') ? 'block' : 'none';
 
         // 멤버십 섹션 → 프로필 모드
         authContainer.style.display = 'none';
@@ -146,7 +146,7 @@ function updateUI() {
         membershipTitle.textContent = '내 프로필';
 
         // 프로필 폼 채우기
-        fillProfileForm();
+        if (currentProfile) fillProfileForm();
     } else {
         // 비로그인 상태
         navLoginLink.style.display = 'block';
