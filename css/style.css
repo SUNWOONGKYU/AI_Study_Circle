@@ -304,8 +304,8 @@ nav {
 
 .hero h1 {
     font-family: 'Outfit', sans-serif;
-    font-size: 3.25rem;
-    font-size: clamp(2.75rem, 7vw, 5.25rem);
+    font-size: 3rem;
+    font-size: clamp(2.5rem, 6vw, 5rem);
     font-weight: 900;
     line-height: 1.1;
     letter-spacing: -2px;
@@ -321,7 +321,7 @@ nav {
 }
 
 .hero-subtitle {
-    font-size: 1.125rem;
+    font-size: 0.875rem;
     color: var(--text-secondary);
     max-width: 600px;
     line-height: 1.8;
