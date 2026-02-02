@@ -652,17 +652,34 @@ document.querySelectorAll('.dropdown-item').forEach(item => {
 });
 
 // ========== Init ==========
+let startAttempts = 0;
 function startApp() {
-    if (typeof DB === 'undefined') {
-        console.error('DB not loaded — retrying in 500ms');
+    startAttempts++;
+    var dbReady = typeof DB !== 'undefined';
+    var sbReady = typeof window.supabase !== 'undefined';
+
+    if (!dbReady && startAttempts <= 10) {
+        console.warn('startApp attempt ' + startAttempts + ' — DB:' + dbReady + ' supabase:' + sbReady);
+        var ec = document.getElementById('events-container');
+        if (ec) ec.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted);">로딩 중... (시도 ' + startAttempts + '/10, DB:' + dbReady + ', supabase:' + sbReady + ')</div>';
         setTimeout(startApp, 500);
         return;
     }
-    // 모임/장소는 인증과 무관하게 즉시 로드
-    renderScheduleEvents().catch(e => console.error('Events render error:', e));
-    renderLocations().catch(e => console.error('Locations render error:', e));
-    // 인증 초기화 (별도)
-    initAuth().catch(e => console.error('Auth init error:', e));
+
+    if (!dbReady) {
+        // 10번 시도 후에도 실패 — 에러 표시
+        var ec = document.getElementById('events-container');
+        var lc = document.getElementById('locations-container');
+        var msg = 'Supabase 로드 실패 (DB:' + dbReady + ', window.supabase:' + sbReady + '). 페이지를 새로고침 해주세요.';
+        if (ec) ec.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--accent-pink);">' + msg + '</div>';
+        if (lc) lc.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--accent-pink);">' + msg + '</div>';
+        return;
+    }
+
+    // 정상 실행
+    renderScheduleEvents().catch(function(e) { console.error('Events render error:', e); });
+    renderLocations().catch(function(e) { console.error('Locations render error:', e); });
+    initAuth().catch(function(e) { console.error('Auth init error:', e); });
 }
 
 // DOM 로드 완료 후 실행
