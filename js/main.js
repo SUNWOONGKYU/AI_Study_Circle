@@ -642,4 +642,9 @@ document.querySelectorAll('.dropdown-item').forEach(item => {
 });
 
 // ========== Init ==========
-try { initAuth(); } catch(e) { console.error('Auth init error:', e); }
+// 모임/장소는 인증과 무관하게 즉시 로드
+renderScheduleEvents().catch(e => console.error('Events render error:', e));
+renderLocations().catch(e => console.error('Locations render error:', e));
+
+// 인증 초기화 (별도)
+initAuth().catch(e => console.error('Auth init error:', e));
