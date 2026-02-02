@@ -23,12 +23,10 @@ function openModal(tab, options) {
         notice.style.display = (options && options.showNotice) ? 'block' : 'none';
     }
 
-    if (!currentUser) {
-        const isLogin = tab === 'login';
-        document.getElementById('signup-form').style.display = isLogin ? 'none' : 'block';
-        document.getElementById('login-form').style.display = isLogin ? 'block' : 'none';
-        document.getElementById('membership-title').textContent = isLogin ? '로그인' : '멤버 가입';
-    }
+    const isLogin = tab === 'login';
+    document.getElementById('signup-form').style.display = isLogin ? 'none' : 'block';
+    document.getElementById('login-form').style.display = isLogin ? 'block' : 'none';
+    document.getElementById('membership-title').textContent = isLogin ? '로그인' : '멤버 가입';
 }
 
 function closeModal() {
