@@ -27,13 +27,8 @@ function openModal(tab, options) {
         // 로그인 상태: 프로필 현황 표시
         document.getElementById('auth-container').style.display = 'none';
         document.getElementById('profile-container').style.display = 'block';
-        document.getElementById('profile-view').style.display = 'block';
-        document.getElementById('profile-edit').style.display = 'none';
         document.getElementById('membership-title').textContent = '프로필 현황';
-        if (currentProfile) {
-            fillProfileView();
-            fillProfileForm();
-        }
+        if (currentProfile) fillProfileAll();
     } else {
         // 비로그인 상태: 가입/로그인 표시
         document.getElementById('auth-container').style.display = 'block';
@@ -161,14 +156,8 @@ function updateUI() {
         profileContainer.style.display = 'block';
         membershipTitle.textContent = '프로필 현황';
 
-        // 프로필 현황 채우기 + 수정폼 채우기
-        if (currentProfile) {
-            fillProfileView();
-            fillProfileForm();
-        }
-        // 현황 모드로 표시
-        document.getElementById('profile-view').style.display = 'block';
-        document.getElementById('profile-edit').style.display = 'none';
+        // 프로필 데이터 채우기
+        if (currentProfile) fillProfileAll();
     } else {
         // 비로그인 상태
         navLoginLink.style.display = 'block';
@@ -184,23 +173,18 @@ function updateUI() {
     updateAttendUI();
 }
 
-function fillProfileView() {
+function fillProfileAll() {
     if (!currentProfile) return;
+    // 읽기전용 정보
     document.getElementById('pv-name').textContent = currentProfile.name || '-';
     document.getElementById('pv-phone').textContent = currentProfile.phone || '-';
     document.getElementById('pv-email').textContent = (currentUser && currentUser.email) || '-';
-    document.getElementById('pv-type').textContent = currentProfile.member_type || '-';
-    document.getElementById('pv-interests').textContent = (currentProfile.interests || []).join(', ') || '-';
-    document.getElementById('pv-message').textContent = currentProfile.message || '-';
-}
-
-function fillProfileForm() {
-    if (!currentProfile) return;
+    // 숨겨진 input (저장용)
     document.getElementById('p-name').value = currentProfile.name || '';
     document.getElementById('p-contact').value = currentProfile.phone || '';
+    // 수정 가능 필드
     document.getElementById('p-type').value = currentProfile.member_type || '';
     document.getElementById('p-message').value = currentProfile.message || '';
-
     // 관심분야 체크
     const checkboxes = document.querySelectorAll('#profile-interests input[type="checkbox"]');
     const interests = currentProfile.interests || [];
@@ -208,20 +192,6 @@ function fillProfileForm() {
         cb.checked = interests.includes(cb.value);
     });
 }
-
-// ========== Profile Edit/Cancel ==========
-document.getElementById('profile-edit-btn').addEventListener('click', () => {
-    document.getElementById('profile-view').style.display = 'none';
-    document.getElementById('profile-edit').style.display = 'block';
-    document.getElementById('membership-title').textContent = '프로필 수정';
-});
-
-document.getElementById('profile-cancel-btn').addEventListener('click', () => {
-    document.getElementById('profile-view').style.display = 'block';
-    document.getElementById('profile-edit').style.display = 'none';
-    document.getElementById('membership-title').textContent = '프로필 현황';
-    if (currentProfile) fillProfileForm(); // 수정 취소 시 원래값 복원
-});
 
 // ========== Helper: escape HTML ==========
 function escapeHtml(str) {
@@ -651,14 +621,8 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
             message
         });
         document.getElementById('nav-user-name').textContent = name;
-        fillProfileView();
+        fillProfileAll();
         setStatus(statusEl, '프로필이 저장되었습니다.', 'success');
-        // 1초 후 현황 모드로 전환
-        setTimeout(() => {
-            document.getElementById('profile-view').style.display = 'block';
-            document.getElementById('profile-edit').style.display = 'none';
-            document.getElementById('membership-title').textContent = '프로필 현황';
-        }, 1000);
     } catch (err) {
         setStatus(statusEl, '저장 중 오류가 발생했습니다.', 'error');
     } finally {
