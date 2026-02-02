@@ -613,6 +613,44 @@ document.getElementById('profile-form').addEventListener('submit', async (e) => 
     }
 });
 
+// ========== Password Change ==========
+document.getElementById('password-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const statusEl = document.getElementById('password-status');
+    const btn = e.target.querySelector('.form-submit');
+
+    const newPw = document.getElementById('pw-new').value;
+    const confirmPw = document.getElementById('pw-confirm').value;
+
+    if (newPw.length < 6) {
+        setStatus(statusEl, '비밀번호는 6자 이상이어야 합니다.', 'error');
+        return;
+    }
+    if (!/^[a-zA-Z0-9]+$/.test(newPw)) {
+        setStatus(statusEl, '비밀번호는 영문과 숫자만 사용할 수 있습니다.', 'error');
+        return;
+    }
+    if (newPw !== confirmPw) {
+        setStatus(statusEl, '비밀번호가 일치하지 않습니다.', 'error');
+        return;
+    }
+
+    setStatus(statusEl, '변경 중...', 'loading');
+    btn.disabled = true;
+
+    try {
+        const { error } = await _supabase.auth.updateUser({ password: newPw });
+        if (error) throw error;
+        setStatus(statusEl, '비밀번호가 변경되었습니다.', 'success');
+        e.target.reset();
+    } catch (err) {
+        const msg = err.message || '비밀번호 변경 중 오류가 발생했습니다.';
+        setStatus(statusEl, msg, 'error');
+    } finally {
+        btn.disabled = false;
+    }
+});
+
 // ========== Attend Toggle (handled dynamically in rebindAttendButtons) ==========
 
 // ========== Attend Submit ==========

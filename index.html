@@ -478,6 +478,23 @@
                     <button type="submit" class="btn-primary form-submit">프로필 저장 →</button>
                     <div class="form-status" id="profile-status"></div>
                 </form>
+
+                <!-- 비밀번호 변경 -->
+                <div class="password-change-section" style="margin-top:2.5rem; padding-top:2rem; border-top:1px solid rgba(255,255,255,0.08);">
+                    <h3 style="font-size:1.1rem; margin-bottom:1.2rem; color:var(--text-primary);">비밀번호 변경</h3>
+                    <form id="password-form" class="site-form">
+                        <div class="form-group">
+                            <label for="pw-new">새 비밀번호 <span class="required">*</span></label>
+                            <input type="password" id="pw-new" name="new_password" required minlength="6" placeholder="영문+숫자 6자 이상">
+                        </div>
+                        <div class="form-group">
+                            <label for="pw-confirm">새 비밀번호 확인 <span class="required">*</span></label>
+                            <input type="password" id="pw-confirm" name="confirm_password" required minlength="6" placeholder="새 비밀번호를 다시 입력">
+                        </div>
+                        <button type="submit" class="btn-secondary form-submit">비밀번호 변경 →</button>
+                        <div class="form-status" id="password-status"></div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
