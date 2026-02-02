@@ -182,16 +182,18 @@ function formatEventDate(dateStr, dayLabel) {
     const parts = dateStr.split('-');
     const month = parseInt(parts[1]);
     const day = parseInt(parts[2]);
-    // day_label이 DB에 있으면 그대로 사용, 없으면 자동 계산
-    var dayName;
+    // 영어→한글 요일 매핑
+    var engToKor = { 'SUN': '일요일', 'MON': '월요일', 'TUE': '화요일', 'WED': '수요일', 'THU': '목요일', 'FRI': '금요일', 'SAT': '토요일' };
+    var dayEng;
     if (dayLabel) {
-        dayName = dayLabel;
+        dayEng = dayLabel;
     } else {
-        const year = parseInt(parts[0]);
-        const date = new Date(year, month - 1, day);
-        const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-        dayName = dayNames[date.getDay()];
+        var year = parseInt(parts[0]);
+        var date = new Date(year, month - 1, day);
+        var dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+        dayEng = dayNames[date.getDay()];
     }
+    var dayName = engToKor[dayEng] || dayEng;
     return { display: `${month}.${day}`, dayName };
 }
 
@@ -280,7 +282,7 @@ async function renderScheduleEvents() {
             return `
                 <div class="schedule-card reveal">
                     <div class="schedule-highlight">
-                        <div class="schedule-date-label">✨ ${escapeHtml(ev.title)}</div>
+                        <div class="schedule-date-label" style="font-size:1.4rem;font-weight:700;">✨ ${escapeHtml(ev.title)}</div>
                         <div class="schedule-date">
                             <span class="month">${display}</span> ${dayName}
                         </div>
@@ -380,7 +382,7 @@ async function renderLocations() {
         }
 
         const icons = { primary: '🟡', secondary: '🏠' };
-        const badges = { primary: '메인 장소', secondary: '보조 장소' };
+        const badges = { primary: '메인', secondary: '보조' };
 
         container.innerHTML = locations.map(loc => {
             const icon = icons[loc.loc_type] || '📍';
