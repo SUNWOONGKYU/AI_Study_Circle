@@ -43,6 +43,9 @@ function openModal(tab, options) {
 function closeModal() {
     authModal.classList.remove('open');
     document.body.style.overflow = '';
+    // 모달 닫을 때 참여 UI 갱신 (로그인/가입 후 닫았을 때 버튼 상태 반영)
+    updateAttendUI();
+    if (currentUser) checkAttendance();
 }
 
 // 모든 data-open-modal 버튼에서 모달 열기
@@ -314,7 +317,7 @@ async function renderScheduleEvents() {
             // 참여 버튼 (schedule-highlight 안)
             const attendBtns = isFirst ? `
                 <div class="attend-btn-wrap" id="attend-section">
-                    <button type="button" class="btn-primary" id="attend-guest-btn" data-open-modal="login">이 모임 참여 신청하기 →</button>
+                    <button type="button" class="btn-primary" id="attend-guest-btn">멤버 가입 후 참여 신청하기 →</button>
                     <div id="attend-logged-in" style="display:none;">
                         <button type="button" class="btn-primary attend-toggle" id="attend-toggle-btn">이 모임 참여 신청하기 →</button>
                     </div>
@@ -388,12 +391,12 @@ async function renderScheduleEvents() {
 
 // ========== Rebind attend buttons after dynamic render ==========
 function rebindAttendButtons() {
-    // data-open-modal 버튼 재연결
+    // 비회원용 버튼: 가입 모달 열기
     const guestBtn = document.getElementById('attend-guest-btn');
     if (guestBtn) {
         guestBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            openModal('login', { showNotice: true });
+            openModal('signup', { showNotice: true });
         });
     }
 
