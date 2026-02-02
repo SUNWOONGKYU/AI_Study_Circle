@@ -709,8 +709,10 @@ section {
 
 .schedule-date .day-name {
     font-family: 'Noto Sans KR', sans-serif;
-    font-size: inherit;
-    font-weight: inherit;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    vertical-align: baseline;
 }
 
 .schedule-time {
