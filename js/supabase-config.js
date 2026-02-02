@@ -220,6 +220,34 @@ var DB = {
         if (error) throw error;
     },
 
+    // -- Inquiries --
+    async createInquiry(inquiry) {
+        var { data, error } = await _supabase
+            .from('inquiries')
+            .insert(inquiry)
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
+    },
+
+    async getAllInquiries() {
+        var { data, error } = await _supabase
+            .from('inquiries')
+            .select('*')
+            .order('created_at', { ascending: false });
+        if (error) throw error;
+        return data;
+    },
+
+    async deleteInquiry(id) {
+        var { error } = await _supabase
+            .from('inquiries')
+            .delete()
+            .eq('id', id);
+        if (error) throw error;
+    },
+
     // -- Admin: Attendance by event --
     async getEventAttendees(eventId) {
         var { data, error } = await _supabase
