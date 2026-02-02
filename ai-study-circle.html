@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Study Circle — 바이브코딩 & AI 활용 스터디 모임</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #111118;
+            --bg-card: #16161f;
+            --bg-card-hover: #1c1c28;
+            --accent-cyan: #00e5ff;
+            --accent-blue: #4d7cff;
+            --accent-purple: #a855f7;
+            --accent-pink: #ff3d8b;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --text-primary: #f0f0f5;
+            --text-secondary: #9898b0;
+            --text-muted: #5a5a72;
+            --border: #2a2a3a;
+            --glow-cyan: rgba(0, 229, 255, 0.15);
+            --glow-blue: rgba(77, 124, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', 'Outfit', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+
+        /* ========== ANIMATED BACKGROUND ========== */
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: 0;
+            pointer-events: none;
+            animation: orbFloat 20s ease-in-out infinite;
+        }
+
+        .bg-orb-1 {
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(0, 229, 255, 0.08), transparent 70%);
+            top: -200px; right: -200px;
+        }
+
+        .bg-orb-2 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.06), transparent 70%);
+            bottom: -150px; left: -150px;
+            animation-delay: -10s;
+        }
+
+        .bg-orb-3 {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(77, 124, 255, 0.06), transparent 70%);
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -5s;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(30px, -40px); }
+            50% { transform: translate(-20px, 30px); }
+            75% { transform: translate(40px, 20px); }
+        }
+
+        /* ========== NAV ========== */
+        nav {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(42, 42, 58, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.4rem;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-logo .ai {
+            color: var(--accent-cyan);
+            text-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+        }
+
+        .nav-logo .sc {
+            color: var(--text-primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-cyan);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px; left: 0;
+            width: 0; height: 2px;
+            background: var(--accent-cyan);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            padding: 0.5rem 1.2rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: var(--bg-primary) !important;
+            border-radius: 8px;
+            font-weight: 700 !important;
+            font-size: 0.85rem;
+        }
+
+        .nav-cta:hover {
+            color: var(--bg-primary) !important;
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.3);
+        }
+
+        .nav-cta::after { display: none !important; }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* ========== HERO ========== */
+        .hero {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 8rem 2rem 4rem;
+        }
+
+        .hero-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            background: rgba(0, 229, 255, 0.08);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .hero-badge .dot {
+            width: 8px; height: 8px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        .hero h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+            opacity: 0;
+        }
+
+        .hero h1 .gradient {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            line-height: 1.8;
+            margin-bottom: 2.5rem;
+            animation: fadeInUp 0.8s ease 0.4s forwards;
+            opacity: 0;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.6s forwards;
+            opacity: 0;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.9rem 2rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: var(--bg-primary);
+            font-weight: 700;
+            font-size: 1rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 229, 255, 0.3);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.9rem 2rem;
+            background: transparent;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 229, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            margin-top: 4rem;
+            padding-top: 3rem;
+            border-top: 1px solid var(--border);
+            animation: fadeInUp 0.8s ease 0.8s forwards;
+            opacity: 0;
+        }
+
+        .hero-stat .number {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            line-height: 1;
+        }
+
+        .hero-stat .label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== SECTIONS COMMON ========== */
+        section {
+            position: relative;
+            z-index: 1;
+            padding: 6rem 2rem;
+        }
+
+        .section-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 1rem;
+        }
+
+        .section-desc {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 3rem;
+        }
+
+        /* ========== ABOUT ========== */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .about-text p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+
+        .about-text .highlight {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .about-values {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .value-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.2rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .value-item:hover {
+            border-color: var(--accent-cyan);
+            background: var(--bg-card-hover);
+            transform: translateX(8px);
+        }
+
+        .value-icon {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .value-item:nth-child(1) .value-icon { background: rgba(0, 229, 255, 0.1); }
+        .value-item:nth-child(2) .value-icon { background: rgba(168, 85, 247, 0.1); }
+        .value-item:nth-child(3) .value-icon { background: rgba(245, 158, 11, 0.1); }
+        .value-item:nth-child(4) .value-icon { background: rgba(16, 185, 129, 0.1); }
+
+        .value-content h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+
+        .value-content p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* ========== ACTIVITIES ========== */
+        .activities-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .activity-card {
+            padding: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .activity-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 3px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .activity-card:hover {
+            border-color: rgba(0, 229, 255, 0.3);
+            background: var(--bg-card-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .activity-card:hover::before {
+            opacity: 1;
+        }
+
+        .activity-emoji {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .activity-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .activity-tag {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.7rem;
+            font-family: 'JetBrains Mono', monospace;
+            border-radius: 6px;
+            background: rgba(0, 229, 255, 0.08);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(0, 229, 255, 0.15);
+        }
+
+        /* ========== MEMBER TYPES ========== */
+        .members-section {
+            background: var(--bg-secondary);
+        }
+
+        .member-types {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1.2rem;
+        }
+
+        .member-type {
+            text-align: center;
+            padding: 2rem 1.2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .member-type:hover {
+            transform: translateY(-6px);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .member-type .emoji {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .member-type h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+
+        .member-type p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* ========== SCHEDULE ========== */
+        .schedule-card {
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.05), rgba(77, 124, 255, 0.05));
+            border: 1px solid rgba(0, 229, 255, 0.15);
+            border-radius: 24px;
+            padding: 3rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .schedule-highlight {
+            text-align: center;
+        }
+
+        .schedule-date-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 1rem;
+        }
+
+        .schedule-date {
+            font-family: 'Outfit', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+        }
+
+        .schedule-date .month {
+            color: var(--accent-cyan);
+        }
+
+        .schedule-time {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .schedule-badge {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+            font-weight: 700;
+            font-size: 0.85rem;
+            border-radius: 8px;
+        }
+
+        .schedule-details h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .schedule-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .schedule-info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .schedule-info-icon {
+            width: 40px; height: 40px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .schedule-info-text .info-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .schedule-info-text .info-value {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .schedule-info-text .info-value a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        .schedule-info-text .info-value a:hover {
+            text-decoration: underline;
+        }
+
+        /* ========== TIMELINE ========== */
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+            margin-top: 3rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 12px; top: 0;
+            width: 2px; height: 100%;
+            background: linear-gradient(to bottom, var(--accent-cyan), var(--accent-purple));
+            opacity: 0.3;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2.5rem;
+            padding-left: 1.5rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.48rem; top: 8px;
+            width: 12px; height: 12px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+        }
+
+        .timeline-item .tl-date {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.3rem;
+        }
+
+        .timeline-item h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .timeline-item p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* ========== LOCATION ========== */
+        .location-section {
+            background: var(--bg-secondary);
+        }
+
+        .location-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .location-card {
+            padding: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .location-card.primary {
+            border-color: rgba(0, 229, 255, 0.3);
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.03), rgba(77, 124, 255, 0.03));
+        }
+
+        .location-card .loc-badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.7rem;
+            font-family: 'JetBrains Mono', monospace;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+
+        .location-card.primary .loc-badge {
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--accent-cyan);
+        }
+
+        .location-card.secondary .loc-badge {
+            background: rgba(168, 85, 247, 0.1);
+            color: var(--accent-purple);
+        }
+
+        .location-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .location-card .loc-address {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .location-card .loc-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .location-card .loc-link:hover {
+            text-decoration: underline;
+        }
+
+        .location-card .loc-note {
+            margin-top: 1rem;
+            padding: 0.8rem 1rem;
+            background: rgba(0, 229, 255, 0.05);
+            border-radius: 10px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* ========== JOIN / CTA ========== */
+        .join-section {
+            text-align: center;
+            padding: 8rem 2rem;
+        }
+
+        .join-section .section-title {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .join-section .section-desc {
+            max-width: 600px;
+            margin: 0 auto 3rem;
+        }
+
+        .join-methods {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+        }
+
+        .join-method {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.2rem 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .join-method:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .join-method .jm-icon {
+            font-size: 1.5rem;
+        }
+
+        .join-method .jm-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .join-method .jm-value {
+            font-weight: 700;
+        }
+
+        /* ========== FOOTER ========== */
+        footer {
+            position: relative;
+            z-index: 1;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-logo .ai { color: var(--accent-cyan); }
+
+        .footer-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .footer-tags {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-tag {
+            padding: 0.3rem 0.8rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ========== SCROLL ANIMATION ========== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1024px) {
+            .activities-grid { grid-template-columns: repeat(2, 1fr); }
+            .member-types { grid-template-columns: repeat(3, 1fr); }
+            .schedule-card { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .mobile-menu-btn { display: block; }
+
+            .hero { padding: 7rem 1.5rem 3rem; }
+            .hero-stats { gap: 1.5rem; }
+            .hero-stat .number { font-size: 1.8rem; }
+
+            .about-grid { grid-template-columns: 1fr; }
+            .activities-grid { grid-template-columns: 1fr; }
+            .member-types { grid-template-columns: repeat(2, 1fr); }
+            .schedule-card { padding: 2rem; }
+            .schedule-date { font-size: 2.5rem; }
+            .location-grid { grid-template-columns: 1fr; }
+            .join-methods { flex-direction: column; align-items: center; }
+        }
+
+        @media (max-width: 480px) {
+            .member-types { grid-template-columns: 1fr; }
+            .hero-stats { flex-direction: column; gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="bg-grid"></div>
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-inner">
+            <div class="nav-logo">
+                <span class="ai">AI</span>
+                <span class="sc">Study Circle</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#about">소개</a></li>
+                <li><a href="#activities">활동</a></li>
+                <li><a href="#schedule">일정</a></li>
+                <li><a href="#location">장소</a></li>
+                <li><a href="#join" class="nav-cta">참여 신청 →</a></li>
+            </ul>
+            <button class="mobile-menu-btn" onclick="document.querySelector('.nav-links').classList.toggle('show')">☰</button>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-badge">
+                <span class="dot"></span>
+                멤버 모집 중 — 누구나 참여 가능
+            </div>
+
+            <h1>
+                자유롭지만 스마트하게<br>
+                <span class="gradient">AI로 만들어내는 모임</span>
+            </h1>
+
+            <p class="hero-subtitle">
+                바이브 코딩, AI 활용, 테크 트렌드, 경제 전망까지 —<br>
+                함께 배우고, 만들고, 공유하는 장벽 없는 스터디 서클
+            </p>
+
+            <div class="hero-actions">
+                <a href="#join" class="btn-primary">참여 신청하기 →</a>
+                <a href="#about" class="btn-secondary">더 알아보기</a>
+            </div>
+
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="number">30+</div>
+                    <div class="label">관심 멤버</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="number">9</div>
+                    <div class="label">활동 분야</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="number">주 1회</div>
+                    <div class="label">정기 모임</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="number">∞</div>
+                    <div class="label">가능성</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section id="about">
+        <div class="section-inner">
+            <div class="about-grid reveal">
+                <div class="about-text">
+                    <div class="section-label">// ABOUT</div>
+                    <h2 class="section-title">AI Study Circle은<br>이런 모임입니다</h2>
+                    <p>
+                        매일 쏟아지는 AI 관련 정보들을 <span class="highlight">선별하고 공유</span>하며,
+                        실제 바이브 코딩을 실행하고 검토해보면서 서로에게 도움이 되는
+                        유용한 방향을 찾기 위한 <span class="highlight">오픈된 모임</span>입니다.
+                    </p>
+                    <p>
+                        AI 및 관련 Tech Trend에 관심 있으신 분들은 누구나 편하게 참석 가능하며,
+                        <span class="highlight">장벽 없는 모임</span>을 지향합니다.
+                        룰보다는 자율성에 초점을 두고, 오픈마인드와 유연함에
+                        진정성을 담아 꾸준히 이어가는 커뮤니티입니다.
+                    </p>
+                </div>
+
+                <div class="about-values">
+                    <div class="value-item">
+                        <div class="value-icon">🎯</div>
+                        <div class="value-content">
+                            <h4>결과를 만들어내는 모임</h4>
+                            <p>매 모임마다 무엇이든 결과물이 나오는 실전형 스터디</p>
+                        </div>
+                    </div>
+                    <div class="value-item">
+                        <div class="value-icon">🤝</div>
+                        <div class="value-content">
+                            <h4>자율과 유연함</h4>
+                            <p>매주 참석 의무 없이, 가능한 일정에 자유롭게 참여</p>
+                        </div>
+                    </div>
+                    <div class="value-item">
+                        <div class="value-icon">🌍</div>
+                        <div class="value-content">
+                            <h4>장벽 없는 참여</h4>
+                            <p>남녀노소 누구나, 해외에서도 참여 가능한 열린 구조</p>
+                        </div>
+                    </div>
+                    <div class="value-item">
+                        <div class="value-icon">💡</div>
+                        <div class="value-content">
+                            <h4>오픈마인드 + 진정성</h4>
+                            <p>2~3명이라도 모이면 무조건 진행하는 실행력</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Activities -->
+    <section id="activities" class="activities-section" style="background: var(--bg-secondary);">
+        <div class="section-inner">
+            <div class="section-label reveal">// ACTIVITIES</div>
+            <h2 class="section-title reveal">9가지 활동 영역</h2>
+            <p class="section-desc reveal">관심 분야에 따라 자유롭게 참여하고, 다양한 영역을 넘나들며 배울 수 있습니다.</p>
+
+            <div class="activities-grid">
+                <div class="activity-card reveal">
+                    <div class="activity-emoji">⌨️</div>
+                    <h3>바이브 코딩 / 개발</h3>
+                    <p>AI와 함께하는 코딩으로 아이디어를 실제 서비스로 만들어봅니다</p>
+                    <span class="activity-tag">MAKING</span>
+                </div>
+                <div class="activity-card reveal">
+                    <div class="activity-emoji">🚀</div>
+                    <h3>앱/웹 서비스 기획 & 런칭</h3>
+                    <p>아이디어부터 실제 런칭까지, 서비스를 세상에 내놓는 전 과정</p>
+                    <span class="activity-tag">LAUNCH</span>
+                </div>
+                <div class="activity-card reveal">
+                    <div class="activity-emoji">🤖</div>
+                    <h3>AI 툴 활용 스터디</h3>
+                    <p>ChatGPT, Claude, Gemini 등 최신 AI 도구들의 실전 활용법</p>
+                    <span class="activity-tag">STUDY</span>
+                </div>
+                <div class="activity-card reveal">
+                    <div class="activity-emoji">🎬</div>
+                    <h3>콘텐츠 제작</h3>
+                    <p>영상, 이미지, 자료 등 AI로 퀄리티 높은 콘텐츠를 만듭니다</p>
+                    <span class="activity-tag">CREATE</span>
+                </div>
+                <div class="activity-card reveal">
+                    <div class="activity-emoji">💼</div>
+                    <h3>사업 아이디어 기획</h3>
+                    <p>제안서, 사업계획서, 피치덱까지 AI와 함께 기획합니다</p>
+                    <span class="activity-tag">BUSINESS</span>
+                </div>
+                <div class="activity-card reveal">
+                    <div class="activity-emoji">📡</div>
+                    <h3>Tech Trend & 정보 공유</h3>
+                    <p>AI, 로봇, 최신 기술 동향을 선별하고 함께 나눕니다</p>
+                    <span class="activity-tag">TREND</span>
+                </div>
+                <div class="activity-card reveal">
+                    <div class="activity-emoji">📊</div>
+                    <h3>경제전망 & 투자</h3>
+                    <p>블록체인, 글로벌 경제 트렌드, 다각화 전략을 토론합니다</p>
+                    <span class="activity-tag">INSIGHT</span>
+                </div>
+                <div class="activity-card reveal">
+                    <div class="activity-emoji">📢</div>
+                    <h3>AI 마케팅 & 브랜딩</h3>
+                    <p>소셜 미디어 활용 포함, AI 기반 마케팅 전략을 연구합니다</p>
+                    <span class="activity-tag">MARKETING</span>
+                </div>
+                <div class="activity-card reveal">
+                    <div class="activity-emoji">☕</div>
+                    <h3>네트워킹</h3>
+                    <p>편하게 참가하며 다양한 분야의 사람들과 연결됩니다</p>
+                    <span class="activity-tag">NETWORK</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Member Types -->
+    <section class="members-section">
+        <div class="section-inner">
+            <div class="section-label reveal">// MEMBERS</div>
+            <h2 class="section-title reveal">어떤 분이든 환영합니다</h2>
+            <p class="section-desc reveal">지금 나에게 가장 가까운 상태가 무엇이든, 여기에 자리가 있습니다.</p>
+
+            <div class="member-types">
+                <div class="member-type reveal">
+                    <div class="emoji">🔥</div>
+                    <h4>메이커</h4>
+                    <p>당장 손으로 만들고<br>부딪히고 싶다</p>
+                </div>
+                <div class="member-type reveal">
+                    <div class="emoji">📚</div>
+                    <h4>러너</h4>
+                    <p>배우면서 천천히<br>참여하고 싶다</p>
+                </div>
+                <div class="member-type reveal">
+                    <div class="emoji">👀</div>
+                    <h4>옵저버</h4>
+                    <p>일단 분위기와<br>흐름을 보고 싶다</p>
+                </div>
+                <div class="member-type reveal">
+                    <div class="emoji">🎤</div>
+                    <h4>컨트리뷰터</h4>
+                    <p>AI 지식을 공유하고<br>모임에 기여하고 싶다</p>
+                </div>
+                <div class="member-type reveal">
+                    <div class="emoji">🚀</div>
+                    <h4>쇼케이서</h4>
+                    <p>개발한 서비스를<br>소개하고 싶다</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Schedule -->
+    <section id="schedule">
+        <div class="section-inner">
+            <div class="section-label reveal">// SCHEDULE</div>
+            <h2 class="section-title reveal">다가오는 모임</h2>
+            <p class="section-desc reveal">첫 모임을 시작으로, 설 이후 주 1회 정기 모임으로 운영됩니다.</p>
+
+            <div class="schedule-card reveal">
+                <div class="schedule-highlight">
+                    <div class="schedule-date-label">FIRST MEETUP</div>
+                    <div class="schedule-date">
+                        <span class="month">2.6</span> FRI
+                    </div>
+                    <div class="schedule-time">저녁 7:00 PM</div>
+                    <span class="schedule-badge">✨ 1차 모임</span>
+                </div>
+
+                <div class="schedule-details">
+                    <h3>1차 모임 상세 정보</h3>
+                    <div class="schedule-info">
+                        <div class="schedule-info-item">
+                            <div class="schedule-info-icon">📍</div>
+                            <div class="schedule-info-text">
+                                <div class="info-label">장소</div>
+                                <div class="info-value">옐로펀치 성수메사</div>
+                            </div>
+                        </div>
+                        <div class="schedule-info-item">
+                            <div class="schedule-info-icon">🗺️</div>
+                            <div class="schedule-info-text">
+                                <div class="info-label">주소</div>
+                                <div class="info-value">성수일로 8길 5 A동 607호</div>
+                            </div>
+                        </div>
+                        <div class="schedule-info-item">
+                            <div class="schedule-info-icon">🔗</div>
+                            <div class="schedule-info-text">
+                                <div class="info-label">네이버 지도</div>
+                                <div class="info-value"><a href="https://naver.me/5duYsK0I" target="_blank">지도에서 보기 →</a></div>
+                            </div>
+                        </div>
+                        <div class="schedule-info-item">
+                            <div class="schedule-info-icon">🥪</div>
+                            <div class="schedule-info-text">
+                                <div class="info-label">제공</div>
+                                <div class="info-value">간단한 샌드위치 & 음료</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="timeline reveal">
+                <div class="timeline-item">
+                    <div class="tl-date">NOW</div>
+                    <h4>멤버 모집 & 신청서 수합</h4>
+                    <p>참가 신청서 작성 및 개별 DM 소통</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="tl-date">2025.02.06</div>
+                    <h4>1차 모임 — 킥오프</h4>
+                    <p>서로 안면 트기, 방향 설정, 첫 활동</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="tl-date">설 전</div>
+                    <h4>1~2회 추가 모임</h4>
+                    <p>초기 멤버 간 친밀도 형성</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="tl-date">설 이후</div>
+                    <h4>주 1회 정기 모임 전환</h4>
+                    <p>꾸준한 학습과 프로젝트 진행</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Location -->
+    <section id="location" class="location-section">
+        <div class="section-inner">
+            <div class="section-label reveal">// LOCATION</div>
+            <h2 class="section-title reveal">모임 장소</h2>
+            <p class="section-desc reveal">유연하게, 다양한 장소를 활용합니다.</p>
+
+            <div class="location-grid">
+                <div class="location-card primary reveal">
+                    <span class="loc-badge">메인 장소</span>
+                    <h3>🟡 옐로펀치 성수메사</h3>
+                    <p class="loc-address">성수일로 8길 5 A동 607호 (성수동2가 248-55)</p>
+                    <a href="https://naver.me/5duYsK0I" target="_blank" class="loc-link">네이버 지도 →</a>
+                    <div class="loc-note">
+                        AI 연구, 바이브코딩, 서비스 개발/창업 모임, 네트워킹에 딱 맞는 공간
+                    </div>
+                </div>
+                <div class="location-card secondary reveal">
+                    <span class="loc-badge">보조 장소</span>
+                    <h3>🏠 고척동 공간</h3>
+                    <p class="loc-address">아담하고 포근한 공간 (주 1회 활용 가능)</p>
+                    <div class="loc-note" style="background: rgba(168, 85, 247, 0.05);">
+                        기타: 강남역 부근 / 양재역 부근 공유오피스 (파이브스팟, 토즈 등) 활용 가능. 무상 제공 장소가 있으면 적극 활용
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Join CTA -->
+    <section id="join" class="join-section">
+        <div class="section-inner">
+            <div class="section-label reveal">// JOIN US</div>
+            <h2 class="section-title reveal">
+                함께 시작해볼까요?
+            </h2>
+            <p class="section-desc reveal">
+                AI 및 Tech Trend에 관심 있으신 분이라면 누구나 편하게 참여할 수 있습니다.
+                둘 셋이라도 모여서 하면 더 재밌고 좋습니다.
+            </p>
+
+            <div class="hero-actions reveal" style="justify-content: center;">
+                <a href="https://buly.kr/5fDxaSf" target="_blank" class="btn-primary">📝 참가 신청서 작성 →</a>
+                <a href="mailto:wksun999@gmail.com" class="btn-secondary">✉️ 이메일 문의</a>
+            </div>
+
+            <div class="join-methods reveal">
+                <div class="join-method">
+                    <div class="jm-icon">💬</div>
+                    <div>
+                        <div class="jm-label">DM으로 문의</div>
+                        <div class="jm-value">Facebook DM</div>
+                    </div>
+                </div>
+                <div class="join-method">
+                    <div class="jm-icon">✉️</div>
+                    <div>
+                        <div class="jm-label">이메일</div>
+                        <div class="jm-value">wksun999@gmail.com</div>
+                    </div>
+                </div>
+                <div class="join-method">
+                    <div class="jm-icon">📋</div>
+                    <div>
+                        <div class="jm-label">원문 보기</div>
+                        <div class="jm-value">Facebook 포스트</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-logo">
+                <span class="ai">AI</span> Study Circle
+            </div>
+            <p class="footer-text">자율과 창의성 안에서 즐겁게 — 리앤컴퍼니 이미경</p>
+            <div class="footer-tags">
+                <span class="footer-tag">#AI스터디모임</span>
+                <span class="footer-tag">#바이브코딩</span>
+                <span class="footer-tag">#AI연구활용</span>
+                <span class="footer-tag">#네트워킹</span>
+                <span class="footer-tag">#TechTrend</span>
+                <span class="footer-tag">#정보공유</span>
+                <span class="footer-tag">#벤처창업</span>
+                <span class="footer-tag">#startup</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll Reveal Script -->
+    <script>
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        reveals.forEach(el => observer.observe(el));
+
+        // Stagger children animations
+        document.querySelectorAll('.activities-grid .activity-card, .member-types .member-type').forEach((el, i) => {
+            el.style.transitionDelay = `${i * 0.08}s`;
+        });
+
+        // Smooth nav background on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(10, 10, 15, 0.95)';
+            } else {
+                nav.style.background = 'rgba(10, 10, 15, 0.8)';
+            }
+        });
+    </script>
+</body>
+</html>
