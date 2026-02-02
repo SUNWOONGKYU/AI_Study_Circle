@@ -319,37 +319,15 @@ async function renderScheduleEvents() {
                 <div class="attend-btn-wrap" id="attend-section">
                     <button type="button" class="btn-primary" id="attend-guest-btn">멤버 가입 후 참여 신청하기 →</button>
                     <div id="attend-logged-in" style="display:none;">
-                        <button type="button" class="btn-primary attend-toggle" id="attend-toggle-btn">이 모임 참여 신청하기 →</button>
+                        <button type="button" class="btn-primary" id="attend-toggle-btn">이 모임 참여 신청하기 →</button>
+                        <div class="form-status" id="attend-status" style="margin-top:0.5rem;"></div>
                     </div>
                     <div id="attend-already" style="display:none;" class="attend-already-msg">
-                        이미 이 모임에 참여 신청했습니다.
+                        ✅ 이 모임에 참여 신청 완료!
                         <button type="button" class="btn-secondary btn-small" id="cancel-attend-btn">참여 취소</button>
                     </div>
                 </div>` : '';
-
-            // 참여 신청 폼 (카드 전체 너비로 표시)
-            const attendForm = isFirst ? `
-                <div id="attend-form-area" style="display:none; grid-column: 1 / -1; padding-top: 1rem;">
-                    <form id="attend-form" class="site-form attend-form-inline">
-                        <input type="hidden" name="event_id" id="attend-event-id" value="${ev.id}">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="a-name">이름</label>
-                                <input type="text" id="a-name" name="name" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="a-contact">전화번호</label>
-                                <input type="text" id="a-contact" name="contact" readonly>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="a-note">메모 (선택)</label>
-                            <textarea id="a-note" name="note" rows="2" placeholder="늦을 수 있어요, 처음 참여합니다 등"></textarea>
-                        </div>
-                        <button type="submit" class="btn-primary form-submit">참여 신청 완료 →</button>
-                        <div class="form-status" id="attend-status"></div>
-                    </form>
-                </div>` : '';
+            const attendForm = '';
 
             return `
                 <div class="schedule-card reveal">
@@ -400,68 +378,27 @@ function rebindAttendButtons() {
         });
     }
 
-    // attend-toggle-btn 재연결
+    // 참여 신청 버튼: 클릭 시 바로 DB에 신청
     const toggleBtn = document.getElementById('attend-toggle-btn');
-    const formArea = document.getElementById('attend-form-area');
-    if (toggleBtn && formArea) {
-        toggleBtn.addEventListener('click', () => {
-            if (formArea.style.display === 'none' || formArea.style.display === '') {
-                formArea.style.display = 'block';
-                // 이름/전화 자동입력
-                if (currentProfile) {
-                    const aName = document.getElementById('a-name');
-                    const aContact = document.getElementById('a-contact');
-                    if (aName) aName.value = currentProfile.name || '';
-                    if (aContact) aContact.value = currentProfile.phone || '';
-                }
-                toggleBtn.textContent = '접기 ▲';
-                toggleBtn.classList.remove('btn-primary');
-                toggleBtn.classList.add('btn-secondary');
-            } else {
-                formArea.style.display = 'none';
-                toggleBtn.textContent = '이 모임 참여 신청하기 →';
-                toggleBtn.classList.remove('btn-secondary');
-                toggleBtn.classList.add('btn-primary');
-            }
-        });
-    }
-
-    // 참여 신청 폼 제출
-    const attendForm = document.getElementById('attend-form');
-    if (attendForm) {
-        attendForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', async () => {
+            if (!currentUser || !currentEventId) return;
             const statusEl = document.getElementById('attend-status');
-            const btn = attendForm.querySelector('.form-submit');
-            const note = document.getElementById('a-note').value.trim();
-            const eventId = parseInt(document.getElementById('attend-event-id').value);
-
-            if (!currentUser) {
-                setStatus(statusEl, '로그인이 필요합니다.', 'error');
-                return;
-            }
-            if (!eventId) {
-                setStatus(statusEl, '모임 정보를 찾을 수 없습니다. 새로고침 해주세요.', 'error');
-                return;
-            }
-
-            setStatus(statusEl, '신청 중...', 'loading');
-            btn.disabled = true;
+            toggleBtn.disabled = true;
+            toggleBtn.textContent = '신청 중...';
 
             try {
-                await DB.attendEvent(currentUser.id, eventId, note);
-                setStatus(statusEl, '참여 신청이 완료되었습니다!', 'success');
-                attendForm.reset();
-                document.getElementById('attend-event-id').value = eventId;
+                await DB.attendEvent(currentUser.id, currentEventId, '');
                 checkAttendance();
             } catch (err) {
                 if (err.message && (err.message.includes('duplicate') || err.code === '23505')) {
-                    setStatus(statusEl, '이미 참여 신청한 모임입니다.', 'error');
+                    checkAttendance();
                 } else {
-                    setStatus(statusEl, '신청 중 오류가 발생했습니다: ' + (err.message || err), 'error');
+                    if (statusEl) setStatus(statusEl, '신청 중 오류: ' + (err.message || err), 'error');
+                    toggleBtn.textContent = '이 모임 참여 신청하기 →';
                 }
             } finally {
-                btn.disabled = false;
+                toggleBtn.disabled = false;
             }
         });
     }
@@ -473,13 +410,13 @@ function rebindAttendButtons() {
             if (!currentUser || !currentEventId) return;
             try {
                 await DB.cancelAttendance(currentUser.id, currentEventId);
-                // UI 리셋
                 const attendAlready = document.getElementById('attend-already');
                 const attendToggle = document.getElementById('attend-toggle-btn');
-                const attendFormArea = document.getElementById('attend-form-area');
                 if (attendAlready) attendAlready.style.display = 'none';
-                if (attendToggle) attendToggle.style.display = '';
-                if (attendFormArea) attendFormArea.style.display = 'none';
+                if (attendToggle) {
+                    attendToggle.style.display = '';
+                    attendToggle.textContent = '이 모임 참여 신청하기 →';
+                }
             } catch (err) {
                 alert('취소 중 오류가 발생했습니다: ' + (err.message || err));
             }
@@ -497,13 +434,6 @@ function updateAttendUI() {
     if (currentUser) {
         if (attendLoggedIn) attendLoggedIn.style.display = 'block';
         if (attendGuestBtn) attendGuestBtn.style.display = 'none';
-        // 참여 폼에 이름/전화 자동입력
-        const aName = document.getElementById('a-name');
-        const aContact = document.getElementById('a-contact');
-        if (currentProfile) {
-            if (aName) aName.value = currentProfile.name || '';
-            if (aContact) aContact.value = currentProfile.phone || '';
-        }
     } else {
         if (attendLoggedIn) attendLoggedIn.style.display = 'none';
         if (attendGuestBtn) attendGuestBtn.style.display = '';
