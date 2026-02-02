@@ -263,7 +263,7 @@ var DB = {
         var userIds = attendances.map(function(a) { return a.user_id; });
         var { data: profiles } = await _supabase
             .from('profiles')
-            .select('id, name, phone')
+            .select('id, name, phone, email')
             .in('id', userIds);
 
         var profileMap = {};

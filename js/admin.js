@@ -264,23 +264,25 @@ async function viewAttendees(eventId, eventTitle) {
 
     card.style.display = 'block';
     titleEl.textContent = `"${eventTitle}" 참여자 명단`;
-    tbody.innerHTML = '<tr><td colspan="4" class="admin-loading">로딩 중...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" class="admin-loading">로딩 중...</td></tr>';
     countEl.textContent = '';
 
     try {
         const attendees = await DB.getEventAttendees(eventId);
 
         if (attendees.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="admin-empty">참여 신청자가 없습니다.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" class="admin-empty">참여 신청자가 없습니다.</td></tr>';
             countEl.textContent = '';
         } else {
             tbody.innerHTML = attendees.map(a => {
                 const name = a.profiles ? a.profiles.name : '-';
                 const phone = a.profiles ? a.profiles.phone : '-';
+                const email = a.profiles ? (a.profiles.email || '-') : '-';
                 const date = a.created_at ? new Date(a.created_at).toLocaleDateString('ko-KR') : '-';
                 return `<tr>
                     <td>${escapeHtml(name)}</td>
                     <td>${escapeHtml(phone)}</td>
+                    <td>${escapeHtml(email)}</td>
                     <td>${escapeHtml(a.note || '-')}</td>
                     <td>${date}</td>
                 </tr>`;
@@ -289,7 +291,7 @@ async function viewAttendees(eventId, eventTitle) {
         }
     } catch (e) {
         console.error('viewAttendees error:', e);
-        tbody.innerHTML = '<tr><td colspan="4" class="admin-empty">참여자 목록을 불러올 수 없습니다: ' + (e.message || e) + '</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="admin-empty">참여자 목록을 불러올 수 없습니다: ' + (e.message || e) + '</td></tr>';
     }
 
     card.scrollIntoView({ behavior: 'smooth', block: 'center' });
