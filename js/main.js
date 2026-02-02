@@ -283,19 +283,29 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
     try {
         await Auth.signUp(email, password, { name, phone });
 
-        // 트리거가 프로필 생성 후 추가 정보 업데이트
-        // 약간의 지연 후 프로필 업데이트
+        // 트리거가 profiles row를 생성할 시간 확보
+        await new Promise(r => setTimeout(r, 1000));
+
         const session = await Auth.getSession();
         if (session) {
-            await DB.updateProfile(session.user.id, {
-                interests,
-                member_type: memberType,
-                message
-            });
+            // 프로필 업데이트 (최대 3회 재시도)
+            for (let i = 0; i < 3; i++) {
+                try {
+                    await DB.updateProfile(session.user.id, {
+                        interests,
+                        member_type: memberType,
+                        message
+                    });
+                    break;
+                } catch (retryErr) {
+                    if (i < 2) await new Promise(r => setTimeout(r, 1000));
+                }
+            }
         }
 
         setStatus(statusEl, '가입이 완료되었습니다! 환영합니다.', 'success');
         e.target.reset();
+        setTimeout(closeModal, 1500);
     } catch (err) {
         let msg = '가입 중 오류가 발생했습니다.';
         if (err.message.includes('already registered')) {
@@ -325,6 +335,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
         await Auth.signIn(email, password);
         setStatus(statusEl, '로그인 성공!', 'success');
         e.target.reset();
+        setTimeout(closeModal, 1000);
     } catch (err) {
         setStatus(statusEl, '이메일 또는 비밀번호가 올바르지 않습니다.', 'error');
     } finally {
