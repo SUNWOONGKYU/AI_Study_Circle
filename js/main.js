@@ -178,9 +178,12 @@ function escapeHtml(str) {
 
 // ========== Helper: format event date ==========
 function formatEventDate(dateStr) {
-    const date = new Date(dateStr + 'T00:00:00');
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
+    // dateStr: "2025-02-06" 형태
+    const parts = dateStr.split('-');
+    const year = parseInt(parts[0]);
+    const month = parseInt(parts[1]);
+    const day = parseInt(parts[2]);
+    const date = new Date(year, month - 1, day); // 로컬 시간 확실히 보장
     const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
     const dayName = dayNames[date.getDay()];
     return { display: `${month}.${day}`, dayName };
@@ -193,7 +196,7 @@ function formatEventTime(timeStr) {
     const hour = parseInt(h);
     const period = hour < 12 ? '오전' : '저녁';
     const displayHour = hour > 12 ? hour - 12 : hour;
-    return `${period} ${displayHour}:${m} ${hour >= 12 ? 'PM' : 'AM'}`;
+    return `${period} ${displayHour}:${m}`;
 }
 
 // ========== Render events from DB ==========
