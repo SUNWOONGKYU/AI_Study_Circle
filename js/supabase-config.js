@@ -103,13 +103,10 @@ var DB = {
 
     // -- Attendance --
     async attendEvent(userId, eventId, note) {
-        var { data, error } = await _supabase
+        var { error } = await _supabase
             .from('attendance')
-            .insert({ user_id: userId, event_id: eventId, note: note || '' })
-            .select()
-            .single();
+            .insert({ user_id: userId, event_id: eventId, note: note || '' });
         if (error) throw error;
-        return data;
     },
 
     async cancelAttendance(userId, eventId) {
