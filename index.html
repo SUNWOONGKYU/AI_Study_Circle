@@ -25,11 +25,12 @@
             </div>
             <ul class="nav-links">
                 <li><a href="#about">소개</a></li>
-                <li><a href="#activities">활동</a></li>
-                <li><a href="#schedule">일정</a></li>
+                <li><a href="#activities">활동영역</a></li>
+                <li><a href="#schedule">모임일정</a></li>
                 <li><a href="#location">장소</a></li>
                 <!-- 비로그인 상태 -->
-                <li id="nav-auth-link"><a href="#" class="nav-cta" data-open-modal>로그인 / 가입 →</a></li>
+                <li id="nav-login-link"><a href="#" class="nav-login-btn" data-open-modal="login">로그인</a></li>
+                <li id="nav-signup-link"><a href="#" class="nav-cta" data-open-modal="signup">멤버 가입 →</a></li>
                 <!-- 로그인 상태 (숨김) -->
                 <li id="nav-user-menu" class="nav-user-menu" style="display:none;">
                     <button class="nav-user-btn" id="nav-user-btn">
@@ -92,7 +93,7 @@
             <div class="about-grid reveal">
                 <div class="about-text">
                     <div class="section-label">// ABOUT</div>
-                    <h2 class="section-title">AI Study Circle 110은<br>이런 모임입니다</h2>
+                    <h2 class="section-title">AI Study Circle <span class="brand-num">110</span>은<br>이런 모임입니다</h2>
                     <p>
                         매일 쏟아지는 AI 관련 정보들을 <span class="highlight">선별하고 공유</span>하며,
                         실제 바이브 코딩을 실행하고 검토해보면서 서로에게 도움이 되는
@@ -331,7 +332,8 @@
                     <!-- 미로그인 상태: 안내 -->
                     <div id="attend-login-prompt">
                         <p class="login-prompt-text">모임 참여 신청을 하려면 로그인이 필요합니다.</p>
-                        <a href="#" class="btn-primary" data-open-modal>로그인 / 가입하기 →</a>
+                        <a href="#" class="btn-secondary" data-open-modal="login">로그인</a>
+                        <a href="#" class="btn-primary" data-open-modal="signup">멤버 가입 →</a>
                     </div>
                 </div>
             </div>
@@ -396,7 +398,7 @@
         <div class="modal-content">
             <button class="modal-close" id="modal-close-btn">&times;</button>
             <h2 class="modal-title" id="membership-title">멤버 가입</h2>
-            <p class="modal-desc" id="membership-desc">AI Study Circle 110에 멤버로 합류하세요.</p>
+            <p class="modal-desc" id="membership-desc">AI Study Circle <span class="brand-num">110</span>에 멤버로 합류하세요.</p>
 
             <!-- 비로그인: 탭 UI (가입 / 로그인) -->
             <div id="auth-container">

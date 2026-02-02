@@ -77,7 +77,8 @@ async function initAuth() {
 }
 
 function updateUI() {
-    const navAuthLink = document.getElementById('nav-auth-link');
+    const navLoginLink = document.getElementById('nav-login-link');
+    const navSignupLink = document.getElementById('nav-signup-link');
     const navUserMenu = document.getElementById('nav-user-menu');
     const navUserName = document.getElementById('nav-user-name');
     const navAdminLink = document.getElementById('nav-admin-link');
@@ -90,7 +91,8 @@ function updateUI() {
 
     if (currentUser && currentProfile) {
         // 로그인 상태
-        navAuthLink.style.display = 'none';
+        navLoginLink.style.display = 'none';
+        navSignupLink.style.display = 'none';
         navUserMenu.style.display = 'block';
         navUserName.textContent = currentProfile.name || currentUser.email;
 
@@ -121,7 +123,8 @@ function updateUI() {
         if (aContact) aContact.value = currentProfile.phone || '';
     } else {
         // 비로그인 상태
-        navAuthLink.style.display = 'block';
+        navLoginLink.style.display = 'block';
+        navSignupLink.style.display = 'block';
         navUserMenu.style.display = 'none';
         navAdminLink.style.display = 'none';
 
@@ -419,9 +422,18 @@ document.querySelectorAll('.dropdown-item').forEach(item => {
 const authModal = document.getElementById('auth-modal');
 const modalCloseBtn = document.getElementById('modal-close-btn');
 
-function openModal() {
+function openModal(tab) {
     authModal.classList.add('open');
     document.body.style.overflow = 'hidden';
+
+    // 탭 전환
+    if (tab && !currentUser) {
+        document.querySelectorAll('.auth-tab').forEach(t => {
+            t.classList.toggle('active', t.dataset.tab === tab);
+        });
+        document.getElementById('signup-form').style.display = tab === 'signup' ? 'block' : 'none';
+        document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+    }
 }
 
 function closeModal() {
@@ -433,7 +445,7 @@ function closeModal() {
 document.querySelectorAll('[data-open-modal]').forEach(el => {
     el.addEventListener('click', (e) => {
         e.preventDefault();
-        openModal();
+        openModal(el.getAttribute('data-open-modal') || 'signup');
     });
 });
 
