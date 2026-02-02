@@ -88,6 +88,7 @@ function updateUI() {
     const membershipDesc = document.getElementById('membership-desc');
     const attendLoggedIn = document.getElementById('attend-logged-in');
     const attendLoginPrompt = document.getElementById('attend-login-prompt');
+    const attendGuestBtn = document.getElementById('attend-guest-btn');
 
     if (currentUser && currentProfile) {
         // 로그인 상태
@@ -115,6 +116,7 @@ function updateUI() {
         // 참여 신청
         attendLoggedIn.style.display = 'block';
         attendLoginPrompt.style.display = 'none';
+        if (attendGuestBtn) attendGuestBtn.style.display = 'none';
 
         // 참여 폼에 이름/전화 자동입력
         const aName = document.getElementById('a-name');
@@ -134,7 +136,8 @@ function updateUI() {
         membershipDesc.textContent = 'AI Study Circle에 멤버로 합류하세요. 누구나 편하게 가입할 수 있습니다.';
 
         attendLoggedIn.style.display = 'none';
-        attendLoginPrompt.style.display = 'block';
+        attendLoginPrompt.style.display = 'none';
+        if (attendGuestBtn) attendGuestBtn.style.display = '';
     }
 }
 
