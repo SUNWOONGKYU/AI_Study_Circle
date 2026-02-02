@@ -30,6 +30,7 @@
                 <li><a href="#activities">활동영역</a></li>
                 <li><a href="#schedule">모임일정</a></li>
                 <li><a href="#location">장소</a></li>
+                <li><a href="#inquiry">문의하기</a></li>
                 <!-- 비로그인 상태 -->
                 <li id="nav-login-link"><a href="#" class="nav-login-btn" data-open-modal="login">로그인</a></li>
                 <li id="nav-signup-link"><a href="#" class="nav-cta" data-open-modal="signup">멤버 가입</a></li>
@@ -274,33 +275,7 @@
                 <div class="admin-loading">모임 정보를 불러오는 중...</div>
             </div>
 
-            <!-- 참여 폼 (동적 카드 아래에 표시) -->
-            <div class="attend-inline" id="attend-inline-wrap">
-                <form id="attend-form" class="site-form attend-form-inline" style="display:none;">
-                    <input type="hidden" name="event_id" id="attend-event-id" value="">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="a-name">이름</label>
-                            <input type="text" id="a-name" name="name" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="a-contact">전화번호</label>
-                            <input type="text" id="a-contact" name="contact" readonly>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="a-note">메모 (선택)</label>
-                        <textarea id="a-note" name="note" rows="2" placeholder="늦을 수 있어요, 처음 참여합니다 등"></textarea>
-                    </div>
-                    <button type="submit" class="btn-primary form-submit">참여 신청 완료 →</button>
-                    <div class="form-status" id="attend-status"></div>
-                </form>
-                <div id="attend-already" style="display:none;" class="attend-already-msg">
-                    이미 이 모임에 참여 신청했습니다.
-                    <button type="button" class="btn-secondary btn-small" id="cancel-attend-btn">참여 취소</button>
-                </div>
-                <div id="attend-login-prompt" style="display:none;"></div>
-            </div>
+            <!-- 참여 폼은 스케줄 카드 안에 동적으로 생성됨 -->
 
             <!-- Timeline -->
             <div class="timeline">
@@ -345,6 +320,44 @@
             <!-- 동적 장소 목록 (DB에서 로드) -->
             <div class="location-grid" id="locations-container">
                 <div class="admin-loading" style="grid-column:1/-1; text-align:center;">장소 정보를 불러오는 중...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 문의하기 섹션 -->
+    <section id="inquiry" class="inquiry-section">
+        <div class="section-inner">
+            <div class="section-label">// INQUIRY</div>
+            <h2 class="section-title">문의하기</h2>
+            <p class="section-desc">궁금한 점이나 제안사항을 보내주세요.</p>
+
+            <div class="inquiry-form-wrap">
+                <form id="inquiry-form" class="site-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="inq-name">이름 <span class="required">*</span></label>
+                            <input type="text" id="inq-name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="inq-phone">전화번호</label>
+                            <input type="text" id="inq-phone" name="phone" placeholder="010-0000-0000">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inq-email">이메일</label>
+                        <input type="email" id="inq-email" name="email" placeholder="email@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="inq-subject">제목 <span class="required">*</span></label>
+                        <input type="text" id="inq-subject" name="subject" required placeholder="문의 제목">
+                    </div>
+                    <div class="form-group">
+                        <label for="inq-message">내용 <span class="required">*</span></label>
+                        <textarea id="inq-message" name="message" rows="5" required placeholder="문의 내용을 입력해주세요"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary form-submit">문의 보내기 →</button>
+                    <div class="form-status" id="inquiry-status"></div>
+                </form>
             </div>
         </div>
     </section>
@@ -529,8 +542,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
-    <script src="js/supabase-config.js?v=20260202c"></script>
-    <script src="js/animations.js?v=20260202c"></script>
-    <script src="js/main.js?v=20260202c"></script>
+    <script src="js/supabase-config.js?v=20260202d"></script>
+    <script src="js/animations.js?v=20260202d"></script>
+    <script src="js/main.js?v=20260202d"></script>
 </body>
 </html>
