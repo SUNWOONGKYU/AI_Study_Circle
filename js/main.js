@@ -401,11 +401,15 @@ async function renderLocations() {
                 ? `<div class="loc-note"${noteStyle}>${escapeHtml(loc.note)}</div>`
                 : '';
 
+            const addressHtml = loc.address
+                ? `<p class="loc-address">${escapeHtml(loc.address)}</p>`
+                : '';
+
             return `
                 <div class="location-card ${escapeHtml(loc.loc_type)}">
                     <span class="loc-badge">${escapeHtml(badge)}</span>
                     <h3>${icon} ${escapeHtml(loc.name)}</h3>
-                    <p class="loc-address">${escapeHtml(loc.address || '')}</p>
+                    ${addressHtml}
                     ${mapLink}
                     ${noteHtml}
                 </div>`;

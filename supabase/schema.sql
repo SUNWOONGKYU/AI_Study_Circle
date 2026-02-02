@@ -155,7 +155,7 @@ CREATE TABLE locations (
 INSERT INTO locations (name, address, map_url, note, loc_type, sort_order)
 VALUES
   ('옐로펀치 성수메사', '서울특별시 성동구 성수일로 8길 5 A동 607호 (성수동2가 248-55)', 'https://naver.me/5duYsK0I', 'AI 연구, 바이브코딩, 서비스 개발/창업 모임, 네트워킹에 딱 맞는 공간', 'primary', 1),
-  ('고척동 공간', '아담하고 포근한 공간 (주 1회 활용 가능)', '', '기타: 강남역 부근 / 양재역 부근 공유오피스 (파이브스팟, 토즈 등) 활용 가능. 무상 제공 장소가 있으면 적극 활용', 'secondary', 2);
+  ('고척동 공간', '', '', '아담하고 포근한 공간 (주 1회 활용 가능)', 'secondary', 2);
 
 -- 장소 RLS
 ALTER TABLE locations ENABLE ROW LEVEL SECURITY;
