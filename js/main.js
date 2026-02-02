@@ -386,7 +386,11 @@ function rebindAttendButtons() {
     const toggleBtn = document.getElementById('attend-toggle-btn');
     if (toggleBtn) {
         toggleBtn.addEventListener('click', () => {
-            if (!currentUser || !currentEventId) return;
+            console.log('attend-toggle clicked, currentUser:', !!currentUser, 'currentEventId:', currentEventId);
+            if (!currentUser) {
+                openModal('login');
+                return;
+            }
             const popup = document.getElementById('attend-popup');
             if (popup) {
                 document.getElementById('attend-memo').value = '';
@@ -423,6 +427,8 @@ function rebindAttendButtons() {
 function updateAttendUI() {
     const attendLoggedIn = document.getElementById('attend-logged-in');
     const attendGuestBtn = document.getElementById('attend-guest-btn');
+
+    console.log('updateAttendUI called — currentUser:', !!currentUser, 'loggedInEl:', !!attendLoggedIn, 'guestEl:', !!attendGuestBtn);
 
     if (!attendLoggedIn && !attendGuestBtn) return;
 
@@ -864,7 +870,11 @@ function startApp() {
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        if (!currentUser || !currentEventId) return;
+        if (!currentUser || !currentEventId) {
+            const statusEl = document.getElementById('attend-popup-status');
+            setStatus(statusEl, '로그인 또는 모임 정보를 확인해주세요.', 'error');
+            return;
+        }
 
         const memo = document.getElementById('attend-memo').value.trim();
         const statusEl = document.getElementById('attend-popup-status');
