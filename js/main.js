@@ -150,12 +150,15 @@ function updateUI() {
     const profileContainer = document.getElementById('profile-container');
     const membershipTitle = document.getElementById('membership-title');
 
+    const heroSignupBtn = document.getElementById('hero-signup-btn');
+
     if (currentUser) {
         // 로그인 상태
         navLoginLink.style.display = 'none';
         navSignupLink.style.display = 'none';
         navUserMenu.style.display = 'block';
         navUserName.textContent = (currentProfile && currentProfile.name) || currentUser.email;
+        if (heroSignupBtn) heroSignupBtn.style.display = 'none';
 
         // 관리자 링크
         navAdminLink.style.display = (currentProfile && currentProfile.role === 'admin') ? 'block' : 'none';
@@ -173,6 +176,7 @@ function updateUI() {
         navSignupLink.style.display = 'block';
         navUserMenu.style.display = 'none';
         navAdminLink.style.display = 'none';
+        if (heroSignupBtn) heroSignupBtn.style.display = '';
 
         authContainer.style.display = 'block';
         profileContainer.style.display = 'none';
