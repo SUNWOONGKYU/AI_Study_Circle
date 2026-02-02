@@ -31,6 +31,7 @@ async function initAdmin() {
 
     loadMembers();
     loadEvents();
+    loadLocations();
 }
 
 function showDenied() {
@@ -281,6 +282,134 @@ async function viewAttendees(eventId, eventTitle) {
     }
 
     card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ========== Locations ==========
+let allLocations = [];
+
+async function loadLocations() {
+    try {
+        allLocations = await DB.getAllLocations();
+        renderLocations(allLocations);
+    } catch (e) {
+        document.getElementById('locations-tbody').innerHTML =
+            '<tr><td colspan="5" class="admin-empty">장소 목록을 불러올 수 없습니다.</td></tr>';
+    }
+}
+
+function renderLocations(locations) {
+    const tbody = document.getElementById('locations-tbody');
+    if (locations.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="admin-empty">등록된 장소가 없습니다.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = locations.map(loc => {
+        const typeLabel = loc.loc_type === 'primary' ? '메인' : '보조';
+        const status = loc.is_active
+            ? '<span class="admin-badge active">활성</span>'
+            : '<span class="admin-badge inactive">비활성</span>';
+
+        return `<tr>
+            <td>${escapeHtml(loc.name)}</td>
+            <td>${escapeHtml(loc.address || '-')}</td>
+            <td>${escapeHtml(typeLabel)}</td>
+            <td>${status}</td>
+            <td>
+                <button class="btn-secondary btn-small" onclick="editLocation(${loc.id})">수정</button>
+                <button class="btn-secondary btn-small" onclick="toggleLocationActive(${loc.id}, ${loc.is_active})">${loc.is_active ? '비활성화' : '활성화'}</button>
+                <button class="btn-secondary btn-small" onclick="deleteLocation(${loc.id})" style="color:var(--accent-pink);">삭제</button>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+// ========== Location Form ==========
+const locForm = document.getElementById('loc-form');
+const locFormReset = document.getElementById('loc-form-reset');
+
+locForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const statusEl = document.getElementById('loc-form-status');
+    const btn = locForm.querySelector('.form-submit');
+    const editId = document.getElementById('edit-loc-id').value;
+
+    const locData = {
+        name: document.getElementById('loc-name').value.trim(),
+        loc_type: document.getElementById('loc-type').value,
+        address: document.getElementById('loc-address').value.trim(),
+        map_url: document.getElementById('loc-map-url').value.trim(),
+        note: document.getElementById('loc-note').value.trim()
+    };
+
+    statusEl.textContent = '저장 중...';
+    statusEl.className = 'form-status loading';
+    btn.disabled = true;
+
+    try {
+        if (editId) {
+            await DB.updateLocation(parseInt(editId), locData);
+            statusEl.textContent = '장소가 수정되었습니다.';
+        } else {
+            await DB.createLocation(locData);
+            statusEl.textContent = '장소가 등록되었습니다.';
+        }
+        statusEl.className = 'form-status success';
+        resetLocForm();
+        loadLocations();
+    } catch (err) {
+        statusEl.textContent = '저장 중 오류가 발생했습니다.';
+        statusEl.className = 'form-status error';
+    } finally {
+        btn.disabled = false;
+    }
+});
+
+function editLocation(id) {
+    const loc = allLocations.find(l => l.id === id);
+    if (!loc) return;
+
+    document.getElementById('edit-loc-id').value = loc.id;
+    document.getElementById('loc-name').value = loc.name;
+    document.getElementById('loc-type').value = loc.loc_type || 'primary';
+    document.getElementById('loc-address').value = loc.address || '';
+    document.getElementById('loc-map-url').value = loc.map_url || '';
+    document.getElementById('loc-note').value = loc.note || '';
+    document.getElementById('loc-form-title').textContent = '장소 수정';
+    locForm.querySelector('.form-submit').textContent = '장소 수정 →';
+    locFormReset.style.display = 'inline-flex';
+
+    locForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetLocForm() {
+    locForm.reset();
+    document.getElementById('edit-loc-id').value = '';
+    document.getElementById('loc-form-title').textContent = '새 장소 등록';
+    locForm.querySelector('.form-submit').textContent = '장소 등록 →';
+    locFormReset.style.display = 'none';
+    document.getElementById('loc-form-status').textContent = '';
+}
+
+locFormReset.addEventListener('click', resetLocForm);
+
+async function toggleLocationActive(id, isActive) {
+    try {
+        await DB.updateLocation(id, { is_active: !isActive });
+        loadLocations();
+    } catch (e) {
+        alert('상태 변경 중 오류가 발생했습니다.');
+    }
+}
+
+async function deleteLocation(id) {
+    if (!confirm('이 장소를 삭제하시겠습니까?')) return;
+    try {
+        await DB.deleteLocation(id);
+        loadLocations();
+    } catch (e) {
+        alert('삭제 중 오류가 발생했습니다.');
+    }
 }
 
 // ========== Helpers ==========

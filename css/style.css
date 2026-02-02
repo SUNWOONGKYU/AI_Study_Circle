@@ -1106,11 +1106,12 @@ footer {
 }
 
 .footer-admin {
-    margin-left: 1rem;
-    font-size: 0.7rem;
+    margin-left: 2rem;
+    font-size: 0.6rem;
     color: var(--text-muted);
     text-decoration: none;
-    opacity: 0.4;
+    opacity: 0.3;
+    letter-spacing: 1px;
     transition: opacity 0.3s ease;
 }
 
