@@ -110,7 +110,9 @@ async function initAuth() {
         }
     }
     updateUI();
-    loadFirstEvent();
+    // 카드가 이미 렌더링된 상태면 참여 UI만 업데이트
+    updateAttendUI();
+    if (currentUser) checkAttendance();
 
     Auth.onAuthStateChange(async (event, session) => {
         if (event === 'SIGNED_IN' && session) {
@@ -122,11 +124,15 @@ async function initAuth() {
                 currentProfile = null;
             }
             updateUI();
-            loadFirstEvent();
+            // 로그인 후 참여 UI만 업데이트 (카드 전체 재렌더링 불필요)
+            updateAttendUI();
+            if (currentUser) checkAttendance();
         } else if (event === 'SIGNED_OUT') {
             currentUser = null;
             currentProfile = null;
             updateUI();
+            // 로그아웃 시 참여 UI 초기화
+            updateAttendUI();
         }
     });
 }
@@ -295,8 +301,8 @@ async function renderScheduleEvents() {
                     </div>`;
             }
 
-            // 참여 신청 영역 (첫 번째 이벤트에만 — 버튼 + 폼 + 취소 모두 카드 안)
-            const attendArea = isFirst ? `
+            // 참여 버튼 (schedule-highlight 안)
+            const attendBtns = isFirst ? `
                 <div class="attend-btn-wrap" id="attend-section">
                     <button type="button" class="btn-primary" id="attend-guest-btn" data-open-modal="login">이 모임 참여 신청하기 →</button>
                     <div id="attend-logged-in" style="display:none;">
@@ -306,8 +312,11 @@ async function renderScheduleEvents() {
                         이미 이 모임에 참여 신청했습니다.
                         <button type="button" class="btn-secondary btn-small" id="cancel-attend-btn">참여 취소</button>
                     </div>
-                </div>
-                <div id="attend-form-area" style="display:none; margin-top:1rem;">
+                </div>` : '';
+
+            // 참여 신청 폼 (카드 전체 너비로 표시)
+            const attendForm = isFirst ? `
+                <div id="attend-form-area" style="display:none; grid-column: 1 / -1; padding-top: 1rem;">
                     <form id="attend-form" class="site-form attend-form-inline">
                         <input type="hidden" name="event_id" id="attend-event-id" value="${ev.id}">
                         <div class="form-grid">
@@ -337,7 +346,7 @@ async function renderScheduleEvents() {
                             <span class="month">${display}</span> <span class="day-name">${dayName}</span>
                         </div>
                         ${timeDisplay ? `<div class="schedule-time">${timeDisplay}</div>` : ''}
-                        ${attendArea}
+                        ${attendBtns}
                     </div>
                     ${detailItems ? `
                     <div class="schedule-details">
@@ -346,6 +355,7 @@ async function renderScheduleEvents() {
                             ${detailItems}
                         </div>
                     </div>` : ''}
+                    ${attendForm}
                 </div>`;
         }).join('');
 
@@ -382,8 +392,15 @@ function rebindAttendButtons() {
     const formArea = document.getElementById('attend-form-area');
     if (toggleBtn && formArea) {
         toggleBtn.addEventListener('click', () => {
-            if (formArea.style.display === 'none') {
+            if (formArea.style.display === 'none' || formArea.style.display === '') {
                 formArea.style.display = 'block';
+                // 이름/전화 자동입력
+                if (currentProfile) {
+                    const aName = document.getElementById('a-name');
+                    const aContact = document.getElementById('a-contact');
+                    if (aName) aName.value = currentProfile.name || '';
+                    if (aContact) aContact.value = currentProfile.phone || '';
+                }
                 toggleBtn.textContent = '접기 ▲';
                 toggleBtn.classList.remove('btn-primary');
                 toggleBtn.classList.add('btn-secondary');
@@ -406,8 +423,12 @@ function rebindAttendButtons() {
             const note = document.getElementById('a-note').value.trim();
             const eventId = parseInt(document.getElementById('attend-event-id').value);
 
-            if (!currentUser || !eventId) {
+            if (!currentUser) {
                 setStatus(statusEl, '로그인이 필요합니다.', 'error');
+                return;
+            }
+            if (!eventId) {
+                setStatus(statusEl, '모임 정보를 찾을 수 없습니다. 새로고침 해주세요.', 'error');
                 return;
             }
 
@@ -876,10 +897,11 @@ function startApp() {
         return;
     }
 
-    // 정상 실행
-    renderScheduleEvents().catch(function(e) { console.error('Events render error:', e); });
+    // 정상 실행: 카드 렌더링 완료 후 인증 초기화 (참여 UI가 DOM에 있어야 함)
+    renderScheduleEvents()
+        .then(function() { return initAuth(); })
+        .catch(function(e) { console.error('Init error:', e); });
     renderLocations().catch(function(e) { console.error('Locations render error:', e); });
-    initAuth().catch(function(e) { console.error('Auth init error:', e); });
 }
 
 // DOM 로드 완료 후 실행

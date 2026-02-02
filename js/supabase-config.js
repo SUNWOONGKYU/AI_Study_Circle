@@ -250,12 +250,30 @@ var DB = {
 
     // -- Admin: Attendance by event --
     async getEventAttendees(eventId) {
-        var { data, error } = await _supabase
+        // 참여 기록 가져오기
+        var { data: attendances, error } = await _supabase
             .from('attendance')
-            .select('*, profiles(name, phone)')
+            .select('*')
             .eq('event_id', eventId)
             .order('created_at', { ascending: true });
         if (error) throw error;
-        return data;
+        if (!attendances || attendances.length === 0) return [];
+
+        // 참여자 프로필 개별 조회 (FK 조인 실패 방지)
+        var userIds = attendances.map(function(a) { return a.user_id; });
+        var { data: profiles } = await _supabase
+            .from('profiles')
+            .select('id, name, phone')
+            .in('id', userIds);
+
+        var profileMap = {};
+        if (profiles) {
+            profiles.forEach(function(p) { profileMap[p.id] = p; });
+        }
+
+        return attendances.map(function(a) {
+            a.profiles = profileMap[a.user_id] || null;
+            return a;
+        });
     }
 };
