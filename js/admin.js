@@ -5,29 +5,21 @@ let adminProfile = null;
 
 // ========== Init ==========
 async function initAdmin() {
-    const session = await Auth.getSession();
-    if (!session) {
-        showDenied();
-        return;
-    }
-
-    adminUser = session.user;
-    try {
-        adminProfile = await DB.getProfile(adminUser.id);
-    } catch (e) {
-        showDenied();
-        return;
-    }
-
-    if (!adminProfile || adminProfile.role !== 'admin') {
-        showDenied();
-        return;
-    }
-
-    // 관리자 확인됨
+    // 로그인 여부와 관계없이 콘텐츠 표시
     document.getElementById('admin-loading').style.display = 'none';
     document.getElementById('admin-content').style.display = 'block';
-    document.getElementById('nav-user-name').textContent = adminProfile.name || adminUser.email;
+
+    // 로그인된 경우 사용자 정보 표시
+    try {
+        const session = await Auth.getSession();
+        if (session) {
+            adminUser = session.user;
+            try {
+                adminProfile = await DB.getProfile(adminUser.id);
+                document.getElementById('nav-user-name').textContent = adminProfile.name || adminUser.email;
+            } catch (e) {}
+        }
+    } catch (e) {}
 
     loadMembers();
     loadEvents();
