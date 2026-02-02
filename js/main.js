@@ -401,8 +401,10 @@ function rebindAttendButtons() {
     if (cancelBtn) {
         cancelBtn.addEventListener('click', async () => {
             if (!currentUser || !currentEventId) return;
+            if (!confirm('정말로 참여를 취소하시겠습니까?')) return;
             try {
                 await DB.cancelAttendance(currentUser.id, currentEventId);
+                alert('참여가 취소되었습니다.');
                 const attendAlready = document.getElementById('attend-already');
                 const attendToggle = document.getElementById('attend-toggle-btn');
                 if (attendAlready) attendAlready.style.display = 'none';
