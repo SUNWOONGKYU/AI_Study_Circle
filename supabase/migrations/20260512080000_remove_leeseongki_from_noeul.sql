@@ -1,4 +1,4 @@
--- 1회차(event=3) 노을(29)에서 이성기 제거
+﻿-- 1회차(event=3) 노을(29)에서 [member-D] 제거
 
 DO $$
 DECLARE
@@ -8,7 +8,7 @@ BEGIN
     USING profiles p
     WHERE a.user_id = p.id
       AND a.event_id = 3
-      AND p.name = '이성기';
+      AND p.name = '[member-D]';
     GET DIAGNOSTICS v_deleted = ROW_COUNT;
-    RAISE NOTICE '이성기 attendance 삭제: % 건', v_deleted;
+    RAISE NOTICE '[member-D] attendance 삭제: % 건', v_deleted;
 END $$;

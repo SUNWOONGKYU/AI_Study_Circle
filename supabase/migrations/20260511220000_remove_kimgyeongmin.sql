@@ -1,11 +1,11 @@
--- 1회차(event_id=3) 햇살(slot_id=28) — 김경민 삭제
+﻿-- 1회차(event_id=3) 햇살(slot_id=28) — [member-C] 삭제
 -- 회원(attendance) + 게스트(inquiries) 양쪽 점검
 
 DO $$
 DECLARE
     member_count INTEGER;
     guest_count INTEGER;
-    target_name TEXT := '김경민';
+    target_name TEXT := '[member-C]';
 BEGIN
     SELECT COUNT(*) INTO member_count
     FROM attendance a
